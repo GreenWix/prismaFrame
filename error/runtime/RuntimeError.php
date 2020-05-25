@@ -32,4 +32,8 @@ final class RuntimeError
 		return new RuntimeErrorException(RuntimeErrorCodes::BAD_VALIDATION_RESULT, $message, HTTPCodes::BAD_REQUEST);
 	}
 
+	public static function BAD_INPUT(string $message): RuntimeErrorException{
+		return new RuntimeErrorException(RuntimeErrorCodes::BAD_INPUT, $message, HTTPCodes::BAD_REQUEST);
+	}
+
 }
