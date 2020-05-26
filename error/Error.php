@@ -3,6 +3,8 @@
 
 namespace SociallHouse\prismaFrame\error;
 
+use SociallHouse\prismaFrame\error\runtime\RuntimeErrorCodes;
+
 final class Error
 {
 
@@ -21,8 +23,9 @@ final class Error
 		//todo получать это значение откуда-то
 		$debug = true;
 
-		if($debug && $httpCode === HTTPCodes::INTERNAL_SERVER_ERROR){
+		if(!$debug && $httpCode === HTTPCodes::INTERNAL_SERVER_ERROR){
 			$message = "Internal server error";
+			$id = RuntimeErrorCodes::SECURITY;
 		}
 
 		return new Error([
