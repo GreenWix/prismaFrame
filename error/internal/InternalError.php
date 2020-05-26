@@ -34,4 +34,8 @@ final class InternalError
 		return new InternalErrorException(InternalErrorCodes::UNKNOWN_PARAMETER_TYPE, "Тип аргумента функции не является примитивным");
 	}
 
+	public static function PRISMAFRAME_IS_SINGLETON(): InternalErrorException{
+		return new InternalErrorException(InternalErrorCodes::PRISMAFRAME_IS_SINGLETON, "PrismaFrame можно запускать только в 1 экземпляре");
+	}
+
 }
