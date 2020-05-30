@@ -38,4 +38,8 @@ final class RuntimeError
 		return new RuntimeErrorException(RuntimeErrorCodes::BAD_INPUT, $message, HTTPCodes::BAD_REQUEST);
 	}
 
+	public static function UNKNOWN_PARAMETER_TYPE(string $typeName): RuntimeErrorException{
+		return new RuntimeErrorException(RuntimeErrorCodes::UNKNOWN_PARAMETER_TYPE, "Тип {$typeName} аргумента функции не является поддерживаемым");
+	}
+
 }

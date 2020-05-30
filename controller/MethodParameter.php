@@ -4,7 +4,7 @@
 namespace SociallHouse\prismaFrame\controller;
 
 
-use SociallHouse\prismaFrame\error\internal\InternalErrorException;
+use SociallHouse\prismaFrame\error\runtime\RuntimeErrorException;
 
 class MethodParameter
 {
@@ -39,13 +39,18 @@ class MethodParameter
 	/**
 	 * @param string $input
 	 * @param $var
-	 * @param array $extraData
+	 * @param $reason
 	 * @return bool
-	 * @throws InternalErrorException
+	 * @throws RuntimeErrorException
 	 */
-	public function validate(string $input, &$var): bool{
+	public function validate(string $input, &$var, &$reason): bool{
+		$r = "";
 		foreach ($this->types as $type){
-			if(Checker::validateSupportedType($type, $input, $var, $this-$this->extraData)) return true;
+			if(Checker::validateSupportedType($type, $input, $var, $this->extraData, $r)){
+				return true;
+			}elseif($r !== ""){
+				$reason = $r;
+			}
 		}
 		return false;
 	}

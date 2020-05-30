@@ -13,6 +13,7 @@ interface RuntimeErrorCodes
 	const BAD_METHOD_RUN                        = 0x205; // Не удалось запустить метод
 	const BAD_VALIDATION_RESULT                 = 0x207; // В какой-то из аргументов передан невалидный аргумент
 	const BAD_INPUT                             = 0x208; // Вводные данные являются невалидными
+	const UNKNOWN_PARAMETER_TYPE                = 0x209; //
 	const SECURITY                              = 0x20F; // Ошибка, возникшая во время выполнении метода, из-за которой невозможна работа приложения. Вызывается только из неймспейса SociallHouse\prismaFrame\security
 
 }

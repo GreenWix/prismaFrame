@@ -11,6 +11,8 @@ use ReflectionFunction;
 use ReflectionMethod;
 use SociallHouse\prismaFrame\error\internal\InternalError;
 use SociallHouse\prismaFrame\error\internal\InternalErrorException;
+use SociallHouse\prismaFrame\error\runtime\RuntimeError;
+use SociallHouse\prismaFrame\error\runtime\RuntimeErrorException;
 
 final class Checker
 {
@@ -22,6 +24,7 @@ final class Checker
 
 	/** @var array */
 	private static $supportedTypes = [];
+	private static $supportedTypesCustomErrors = [];
 
 	const ALLOWED_HTTP_METHODS = [
 		"get", "post", "patch", "put"
@@ -92,10 +95,11 @@ final class Checker
 	 * @param string $name
 	 * @param Closure $validator
 	 * @param bool $makeAlsoArrayType
+	 * @param string $reasonOnBadValid
 	 * @throws InternalErrorException
 	 * @throws ReflectionException
 	 */
-	public static function addSupportedType(string $name, Closure $validator, bool $makeAlsoArrayType = false){
+	public static function addSupportedType(string $name, Closure $validator, bool $makeAlsoArrayType = false, string $reasonOnBadValid = ""){
 		$ref = new ReflectionFunction($validator);
 		if($ref->getReturnType()->getName() !== "bool"){
 			throw InternalError::WRONG_RETURN_TYPE("bool");
@@ -117,7 +121,11 @@ final class Checker
 					}else return false;
 				}
 				return true;
-			});
+			}, false, $reasonOnBadValid);
+		}
+
+		if($reasonOnBadValid !== ""){
+			self::$supportedTypesCustomErrors[$name] = $reasonOnBadValid;
 		}
 	}
 
@@ -126,15 +134,18 @@ final class Checker
 	 * @param string $input
 	 * @param $var
 	 * @param array $extraData
+	 * @param string $reason
 	 * @return bool
-	 * @throws InternalErrorException
+	 * @throws RuntimeErrorException
 	 */
-	public static function validateSupportedType(string $name, string $input, &$var, array $extraData = []): bool{
+	public static function validateSupportedType(string $name, string $input, &$var, array $extraData = [], &$reason = ""): bool{
 		if(!isset(self::$supportedTypes[$name])){
-			throw InternalError::UNKNOWN_PARAMETER_TYPE($name); // да-да, во время работы могут быть Internal ошибки, но только в самых критических моментах, хотя этот кейс в теории невозможен, но на всякий случай проверка стоит
+			throw RuntimeError::UNKNOWN_PARAMETER_TYPE($name); // да-да, во время работы могут быть Internal ошибки, но только в самых критических моментах, хотя этот кейс в теории невозможен, но на всякий случай проверка стоит
 		}
 
-		return (self::$supportedTypes[$name])($input, $var, $extraData);
+		$res = (self::$supportedTypes[$name])($input, $var, $extraData);
+		if($res){ return true; }
+		$reason = self::$supportedTypesCustomErrors[$name] ?? "";
 	}
 
 	/**
