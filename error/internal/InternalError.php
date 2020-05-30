@@ -18,8 +18,8 @@ final class InternalError
 		return new InternalErrorException(InternalErrorCodes::NO_DOC, "Метод не содержит php-doc");
 	}
 
-	public static function WRONG_RETURN_TYPE(): InternalErrorException{
-		return new InternalErrorException(InternalErrorCodes::WRONG_RETURN_TYPE, "Метод должен возвращать тип array");
+	public static function WRONG_RETURN_TYPE(string $typeName = "array"): InternalErrorException{
+		return new InternalErrorException(InternalErrorCodes::WRONG_RETURN_TYPE, "Метод должен возвращать тип ".$typeName);
 	}
 
 	public static function NO_SUPPORT_HTTP_METHODS(): InternalErrorException{
@@ -30,12 +30,16 @@ final class InternalError
 		return new InternalErrorException(InternalErrorCodes::NOT_ENOUGH_ARGS, "Php-doc метода содержит упоминание не всех аргументов функции");
 	}
 
-	public static function UNKNOWN_PARAMETER_TYPE(): InternalErrorException{
-		return new InternalErrorException(InternalErrorCodes::UNKNOWN_PARAMETER_TYPE, "Тип аргумента функции не является примитивным");
+	public static function UNKNOWN_PARAMETER_TYPE(string $typeName): InternalErrorException{
+		return new InternalErrorException(InternalErrorCodes::UNKNOWN_PARAMETER_TYPE, "Тип {$typeName} аргумента функции не является поддерживаемым");
 	}
 
-	public static function PRISMAFRAME_IS_SINGLETON(): InternalErrorException{
-		return new InternalErrorException(InternalErrorCodes::PRISMAFRAME_IS_SINGLETON, "PrismaFrame можно запускать только в 1 экземпляре");
+	public static function ELEMENT_ALREADY_REGISTERED(string $typeName, string $elementName): InternalErrorException{
+		return new InternalErrorException(InternalErrorCodes::ELEMENT_ALREADY_REGISTERED, $typeName . " " . $elementName . " уже зарегистрирован");
+	}
+
+	public static function BAD_DOC(string $message): InternalErrorException{
+		return new InternalErrorException(InternalErrorCodes::BAD_DOC, $message);
 	}
 
 }

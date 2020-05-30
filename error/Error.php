@@ -4,6 +4,7 @@
 namespace SociallHouse\prismaFrame\error;
 
 use SociallHouse\prismaFrame\error\runtime\RuntimeErrorCodes;
+use SociallHouse\prismaFrame\PrismaFrame;
 
 final class Error
 {
@@ -20,10 +21,7 @@ final class Error
 	}
 
 	public static function make(int $id, string $message, int $httpCode = HTTPCodes::BAD_REQUEST): Error{
-		//todo получать это значение откуда-то
-		$debug = true;
-
-		if(!$debug && $httpCode === HTTPCodes::INTERNAL_SERVER_ERROR){
+		if(!PrismaFrame::isDebug() && $httpCode === HTTPCodes::INTERNAL_SERVER_ERROR){
 			$message = "Internal server error";
 			$id = RuntimeErrorCodes::SECURITY;
 		}

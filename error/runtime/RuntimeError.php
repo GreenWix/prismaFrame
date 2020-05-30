@@ -10,6 +10,8 @@ use SociallHouse\prismaFrame\error\PrismaException;
 final class RuntimeError
 {
 
+	//todo cache exceptions
+
 	private function __construct(){}
 
 	public static function BAD_RESULT(string $message): RuntimeErrorException{
