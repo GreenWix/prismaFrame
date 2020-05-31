@@ -49,6 +49,13 @@ final class PrismaFrame
 		return self::$working;
 	}
 
+	/**
+	 * @param string $url
+	 * @param string $httpMethod
+	 * @param array $args
+	 * @return array
+	 * @throws RuntimeErrorException
+	 */
 	public static function handle(string $url, string $httpMethod, array $args): array{
 		$raw = explode("/", $url, 2);
 		$raw_2 = explode(".", $raw[1] ?? "", 2);
@@ -56,9 +63,7 @@ final class PrismaFrame
 		$controller = $raw_2[0] ?? "";
 		$method = $raw_2[1] ?? "";
 
-		self::getController($controller)->callMethod($method, $httpMethod, $args);
-
-		return [];
+		return self::getController($controller)->callMethod($method, $httpMethod, $args);
 	}
 
 	/**

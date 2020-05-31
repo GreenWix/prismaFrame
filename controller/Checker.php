@@ -146,6 +146,7 @@ final class Checker
 		$res = (self::$supportedTypes[$name])($input, $var, $extraData);
 		if($res){ return true; }
 		$reason = self::$supportedTypesCustomErrors[$name] ?? "";
+		return false;
 	}
 
 	/**
@@ -166,6 +167,7 @@ final class Checker
 
 			$doc = self::parseDoc($comment);
 
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			if(
 				$method->getReturnType()->getName() !== 'array' ||
 				!isset($doc['return']) ||

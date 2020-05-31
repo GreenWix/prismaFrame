@@ -46,4 +46,8 @@ final class RuntimeError
 		return new RuntimeErrorException(RuntimeErrorCodes::WRONG_HTTP_METHOD, "This method supports only " . $supportedHttpMethods . " HTTP method(s)");
 	}
 
+	public static function WRONG_VERSION(): RuntimeErrorException{
+		return new RuntimeErrorException(RuntimeErrorCodes::WRONG_VERSION, "This version is incompatible");
+	}
+
 }

@@ -15,6 +15,7 @@ interface RuntimeErrorCodes
 	const BAD_INPUT                             = 0x208; // Вводные данные являются невалидными
 	const UNKNOWN_PARAMETER_TYPE                = 0x209; //
 	const WRONG_HTTP_METHOD                     = 0x20A; // Данный метод не поддерживает HTTP метод, используемый в запросе
+	const WRONG_VERSION                         = 0x20A; // Данная версия API не поддерживается
 	const SECURITY                              = 0x20F; // Ошибка, возникшая во время выполнении метода, из-за которой невозможна работа приложения. Вызывается только из неймспейса SociallHouse\prismaFrame\security
 
 }
