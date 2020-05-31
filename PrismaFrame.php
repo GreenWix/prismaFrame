@@ -7,6 +7,8 @@ namespace SociallHouse\prismaFrame;
 use ReflectionException;
 use SociallHouse\prismaFrame\controller\Checker;
 use SociallHouse\prismaFrame\controller\Controller;
+use SociallHouse\prismaFrame\error\Error;
+use SociallHouse\prismaFrame\error\HTTPCodes;
 use SociallHouse\prismaFrame\error\internal\InternalError;
 use SociallHouse\prismaFrame\error\internal\InternalErrorException;
 use SociallHouse\prismaFrame\error\runtime\RuntimeError;
@@ -53,25 +55,28 @@ final class PrismaFrame
 	 * @param string $url
 	 * @param string $httpMethod
 	 * @param array $args
-	 * @return array
-	 * @throws RuntimeErrorException
+	 * @return Response
 	 */
-	public static function handle(string $url, string $httpMethod, array $args): array{
-		if(!isset($args["v"])){
-			throw RuntimeError::BAD_INPUT("Parameter \"v\" is required");
+	public static function handle(string $url, string $httpMethod, array $args): Response{
+		try {
+			if (!isset($args["v"])) {
+				throw RuntimeError::BAD_INPUT("Parameter \"v\" is required");
+			}
+
+			if ($args["v"] !== self::$settings->apiVersion) {
+				throw RuntimeError::WRONG_VERSION();
+			}
+
+			$raw = explode("/", $url, 2);
+			$raw_2 = explode(".", $raw[1] ?? "", 2);
+
+			$controller = $raw_2[0] ?? "";
+			$method = $raw_2[1] ?? "";
+
+			return new Response(self::getController($controller)->callMethod($method, $httpMethod, $args), HTTPCodes::OK);
+		}catch(RuntimeErrorException $e){
+			return Error::make($e->id, $e->getMessage(), $e->httpCode);
 		}
-
-		if($args["v"] !== self::$settings->apiVersion){
-			throw RuntimeError::WRONG_VERSION();
-		}
-
-		$raw = explode("/", $url, 2);
-		$raw_2 = explode(".", $raw[1] ?? "", 2);
-
-		$controller = $raw_2[0] ?? "";
-		$method = $raw_2[1] ?? "";
-
-		return self::getController($controller)->callMethod($method, $httpMethod, $args);
 	}
 
 	/**
