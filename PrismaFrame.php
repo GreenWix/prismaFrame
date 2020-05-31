@@ -13,7 +13,9 @@ use SociallHouse\prismaFrame\error\internal\InternalError;
 use SociallHouse\prismaFrame\error\internal\InternalErrorException;
 use SociallHouse\prismaFrame\error\runtime\RuntimeError;
 use SociallHouse\prismaFrame\error\runtime\RuntimeErrorException;
+use SociallHouse\prismaFrame\error\security\SecurityErrorException;
 use SociallHouse\prismaFrame\settings\PrismaFrameSettings;
+use Throwable;
 
 final class PrismaFrame
 {
@@ -56,8 +58,13 @@ final class PrismaFrame
 	 * @param string $httpMethod
 	 * @param array $args
 	 * @return Response
+	 * @throws InternalErrorException
 	 */
 	public static function handle(string $url, string $httpMethod, array $args): Response{
+		if(!self::$working){
+			throw InternalError::PRISMAFRAME_IS_NOT_STARTED("PrismaFrame::handle() не может быть выполнен, пока PrismaFrame не запущен (PrismaFrame::start())");
+		}
+
 		try {
 			if (!isset($args["v"])) {
 				throw RuntimeError::BAD_INPUT("Parameter \"v\" is required");
@@ -75,7 +82,7 @@ final class PrismaFrame
 
 			return new Response(self::getController($controller)->callMethod($method, $httpMethod, $args), HTTPCodes::OK);
 		}catch(RuntimeErrorException $e){
-			return Error::make($e->id, $e->getMessage(), $e->httpCode);
+			return Error::make($e);
 		}
 	}
 
@@ -98,6 +105,10 @@ final class PrismaFrame
 	 * @throws ReflectionException
 	 */
 	public static function addController(Controller $controller){
+		if(self::$working) {
+			throw InternalError::PRISMAFRAME_ALREADY_STARTED("PrismaFrame::addController() не может быть выполнен, пока PrismaFrame запущен. Регистрируйте контроллеры до запуска PrismaFrame");
+		}
+
 		$controllerName = $controller->getName();
 		if(isset(self::$controllers[$controllerName])){
 			throw InternalError::ELEMENT_ALREADY_REGISTERED("Контроллер", $controllerName);

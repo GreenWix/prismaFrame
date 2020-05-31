@@ -42,4 +42,12 @@ final class InternalError
 		return new InternalErrorException(InternalErrorCodes::BAD_DOC, $message);
 	}
 
+	public static function PRISMAFRAME_IS_NOT_STARTED(string $message): InternalErrorException{
+		return new InternalErrorException(InternalErrorCodes::PRISMAFRAME_IS_NOT_STARTED, $message);
+	}
+
+	public static function PRISMAFRAME_ALREADY_STARTED(string $message): InternalErrorException{
+		return new InternalErrorException(InternalErrorCodes::PRISMAFRAME_ALREADY_STARTED, $message);
+	}
+
 }

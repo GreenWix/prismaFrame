@@ -10,7 +10,7 @@ class PrismaException extends \Exception
 	public $httpCode = 403;
 	public $id;
 
-	public function __construct(int $id, string $message = "", int $httpCode = null)
+	public function __construct(int $id, string $message = "", int $httpCode = HTTPCodes::INTERNAL_SERVER_ERROR)
 	{
 		if($httpCode !== null) {
 			$this->httpCode = $httpCode;

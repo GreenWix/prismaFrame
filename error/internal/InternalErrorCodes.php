@@ -13,6 +13,8 @@ interface InternalErrorCodes
 	const NOT_ENOUGH_ARGS = 0x03; // Указаны не все аргументы функции в php-doc
 	const ELEMENT_ALREADY_REGISTERED = 0x05; // Попытка зарегистрировать поддерживаемый тип, который уже зарегистрирован
 	const BAD_DOC = 0x06; // Ошибка в php-doc
+	const PRISMAFRAME_IS_NOT_STARTED = 0x07; // PrismaFrame еще не запущен и выполнить данное действие нельзя
+	const PRISMAFRAME_ALREADY_STARTED = 0x08; // PrismaFrame уже запущен и выполнить данное действие нельзя
 	const UNKNOWN_PARAMETER_TYPE = 0x0a;
 
 }
