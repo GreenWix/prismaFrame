@@ -15,16 +15,17 @@ abstract class Controller
 
 	/**
 	 * @param string $name
+	 * @param string $httpMethod
 	 * @param array $args
 	 * @return array
 	 * @throws RuntimeErrorException
 	 */
-	final public function callMethod(string $name, array $args): array{
+	final public function callMethod(string $name, string $httpMethod, array $args): array{
 		if(!isset($this->methods[$name])){
 			throw RuntimeError::UNKNOWN_METHOD();
 		}
 
-		return $this->methods[$name]->invoke($args);
+		return $this->methods[$name]->invoke($httpMethod, $args);
 	}
 
 	abstract public function getName(): string;

@@ -49,12 +49,24 @@ final class PrismaFrame
 		return self::$working;
 	}
 
+	public static function handle(string $url, string $httpMethod, array $args): array{
+		$raw = explode("/", $url, 2);
+		$raw_2 = explode(".", $raw[1] ?? "", 2);
+
+		$controller = $raw_2[0] ?? "";
+		$method = $raw_2[1] ?? "";
+
+		self::getController($controller)->callMethod($method, $httpMethod, $args);
+
+		return [];
+	}
+
 	/**
 	 * @param string $name
 	 * @return Controller
 	 * @throws RuntimeErrorException
 	 */
-	public function getController(string $name): Controller{
+	public static function getController(string $name): Controller{
 		if(!isset(self::$controllers[$name])){
 			throw RuntimeError::UNKNOWN_CONTROLLER();
 		}
@@ -67,7 +79,7 @@ final class PrismaFrame
 	 * @throws InternalErrorException
 	 * @throws ReflectionException
 	 */
-	public function addController(Controller $controller){
+	public static function addController(Controller $controller){
 		$controllerName = $controller->getName();
 		if(isset(self::$controllers[$controllerName])){
 			throw InternalError::ELEMENT_ALREADY_REGISTERED("Контроллер", $controllerName);

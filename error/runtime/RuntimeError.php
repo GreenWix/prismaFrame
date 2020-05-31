@@ -39,7 +39,11 @@ final class RuntimeError
 	}
 
 	public static function UNKNOWN_PARAMETER_TYPE(string $typeName): RuntimeErrorException{
-		return new RuntimeErrorException(RuntimeErrorCodes::UNKNOWN_PARAMETER_TYPE, "Тип {$typeName} аргумента функции не является поддерживаемым");
+		return new RuntimeErrorException(RuntimeErrorCodes::UNKNOWN_PARAMETER_TYPE, "Type \"{$typeName}\" is not supported");
+	}
+
+	public static function WRONG_HTTP_METHOD(string $supportedHttpMethods): RuntimeErrorException{
+		return new RuntimeErrorException(RuntimeErrorCodes::WRONG_HTTP_METHOD, "This method supports only " . $supportedHttpMethods . " HTTP method(s)");
 	}
 
 }

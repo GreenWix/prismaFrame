@@ -140,7 +140,7 @@ final class Checker
 	 */
 	public static function validateSupportedType(string $name, string $input, &$var, array $extraData = [], &$reason = ""): bool{
 		if(!isset(self::$supportedTypes[$name])){
-			throw RuntimeError::UNKNOWN_PARAMETER_TYPE($name); // да-да, во время работы могут быть Internal ошибки, но только в самых критических моментах, хотя этот кейс в теории невозможен, но на всякий случай проверка стоит
+			throw RuntimeError::UNKNOWN_PARAMETER_TYPE($name);
 		}
 
 		$res = (self::$supportedTypes[$name])($input, $var, $extraData);

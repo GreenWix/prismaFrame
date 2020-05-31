@@ -19,6 +19,11 @@ final class Method
 	/** @var array */
 	private $httpMethods = [];
 
+	// Используется для вывода об ошибке, которая появляется если запрос сделан с неподдерживаемым HTTP методом
+	// Нужен для того, чтобы постоянно implode("|", httpMethods) не делать
+	/** @var string */
+	private $flatHttpMethods;
+
 	/** @var Controller */
 	private $controller;
 
@@ -35,19 +40,21 @@ final class Method
 		foreach ($httpMethods as $method){
 			$this->httpMethods[$method] = true; // чтобы можно было потом ускоренно проверять через isset
 		}
+		$this->flatHttpMethods = implode("|", $httpMethods);
 		$this->controller = $controller;
 	}
 
-	public function isHttpMethodSupported(string $httpMethodName){
-		return isset($this->httpMethods[$httpMethodName]);
-	}
-
 	/**
+	 * @param string $httpMethod
 	 * @param array $args
 	 * @return array
 	 * @throws RuntimeErrorException
 	 */
-	public function invoke(array $args): array{
+	public function invoke(string $httpMethod, array $args): array{
+		if(!isset($this->httpMethods[$httpMethod])){
+			throw RuntimeError::WRONG_HTTP_METHOD($this->flatHttpMethods);
+		}
+
 		$values = [];
 		foreach ($this->parameters as $name => $param){
 			if($param->required && !isset($args[$name])){
