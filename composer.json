@@ -14,5 +14,10 @@
         "type": "vcs",
         "url": "/Users/noliktop/PhpstormProjects/FrameRunner/vendor/SociallHouse/prismaFrame"
     }],
-    "description": "Framework for creating API"
+    "description": "Framework for creating API",
+    "autoload": {
+        "psr-4": {
+            "SociallHouse\\prismaFrame\\": "/"
+        }
+    }
 }
