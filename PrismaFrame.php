@@ -57,6 +57,14 @@ final class PrismaFrame
 	 * @throws RuntimeErrorException
 	 */
 	public static function handle(string $url, string $httpMethod, array $args): array{
+		if(!isset($args["v"])){
+			throw RuntimeError::BAD_INPUT("Parameter \"v\" is required");
+		}
+
+		if($args["v"] !== self::$settings->apiVersion){
+			throw RuntimeError::WRONG_VERSION();
+		}
+
 		$raw = explode("/", $url, 2);
 		$raw_2 = explode(".", $raw[1] ?? "", 2);
 
