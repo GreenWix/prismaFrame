@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame\error\internal;
+namespace GreenWix\prismaFrame\error\internal;
 
 
 final class InternalError

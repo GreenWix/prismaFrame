@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame\controller;
+namespace GreenWix\prismaFrame\controller;
 
 
 use Closure;
@@ -9,10 +9,10 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
 use ReflectionMethod;
-use SociallHouse\prismaFrame\error\internal\InternalError;
-use SociallHouse\prismaFrame\error\internal\InternalErrorException;
-use SociallHouse\prismaFrame\error\runtime\RuntimeError;
-use SociallHouse\prismaFrame\error\runtime\RuntimeErrorException;
+use GreenWix\prismaFrame\error\internal\InternalError;
+use GreenWix\prismaFrame\error\internal\InternalErrorException;
+use GreenWix\prismaFrame\error\runtime\RuntimeError;
+use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
 
 final class Checker
 {

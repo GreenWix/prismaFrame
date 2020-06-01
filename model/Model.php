@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame\model;
+namespace GreenWix\prismaFrame\model;
 
 
 abstract class Model

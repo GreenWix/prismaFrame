@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame\settings;
+namespace GreenWix\prismaFrame\settings;
 
 
 final class PrismaFrameSettings

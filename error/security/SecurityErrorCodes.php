@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame\error\security;
+namespace GreenWix\prismaFrame\error\security;
 
 
 interface SecurityErrorCodes

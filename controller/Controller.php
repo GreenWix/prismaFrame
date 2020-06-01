@@ -1,11 +1,11 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame\controller;
+namespace GreenWix\prismaFrame\controller;
 
 
-use SociallHouse\prismaFrame\error\runtime\RuntimeError;
-use SociallHouse\prismaFrame\error\runtime\RuntimeErrorException;
+use GreenWix\prismaFrame\error\runtime\RuntimeError;
+use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
 
 abstract class Controller
 {

@@ -1,20 +1,20 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame;
+namespace GreenWix\prismaFrame;
 
 
 use ReflectionException;
-use SociallHouse\prismaFrame\controller\Checker;
-use SociallHouse\prismaFrame\controller\Controller;
-use SociallHouse\prismaFrame\error\Error;
-use SociallHouse\prismaFrame\error\HTTPCodes;
-use SociallHouse\prismaFrame\error\internal\InternalError;
-use SociallHouse\prismaFrame\error\internal\InternalErrorException;
-use SociallHouse\prismaFrame\error\runtime\RuntimeError;
-use SociallHouse\prismaFrame\error\runtime\RuntimeErrorException;
-use SociallHouse\prismaFrame\error\security\SecurityErrorException;
-use SociallHouse\prismaFrame\settings\PrismaFrameSettings;
+use GreenWix\prismaFrame\controller\Checker;
+use GreenWix\prismaFrame\controller\Controller;
+use GreenWix\prismaFrame\error\Error;
+use GreenWix\prismaFrame\error\HTTPCodes;
+use GreenWix\prismaFrame\error\internal\InternalError;
+use GreenWix\prismaFrame\error\internal\InternalErrorException;
+use GreenWix\prismaFrame\error\runtime\RuntimeError;
+use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
+use GreenWix\prismaFrame\error\security\SecurityErrorException;
+use GreenWix\prismaFrame\settings\PrismaFrameSettings;
 use Throwable;
 
 final class PrismaFrame

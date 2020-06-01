@@ -1,10 +1,10 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame\error\internal;
+namespace GreenWix\prismaFrame\error\internal;
 
 
-use SociallHouse\prismaFrame\error\PrismaException;
+use GreenWix\prismaFrame\error\PrismaException;
 
 class InternalErrorException extends PrismaException
 {

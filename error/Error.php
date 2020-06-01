@@ -1,12 +1,12 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame\error;
+namespace GreenWix\prismaFrame\error;
 
-use SociallHouse\prismaFrame\error\runtime\RuntimeErrorCodes;
-use SociallHouse\prismaFrame\error\security\SecurityErrorCodes;
-use SociallHouse\prismaFrame\PrismaFrame;
-use SociallHouse\prismaFrame\Response;
+use GreenWix\prismaFrame\error\runtime\RuntimeErrorCodes;
+use GreenWix\prismaFrame\error\security\SecurityErrorCodes;
+use GreenWix\prismaFrame\PrismaFrame;
+use GreenWix\prismaFrame\Response;
 use Throwable;
 
 final class Error

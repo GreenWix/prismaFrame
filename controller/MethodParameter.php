@@ -1,10 +1,10 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame\controller;
+namespace GreenWix\prismaFrame\controller;
 
 
-use SociallHouse\prismaFrame\error\runtime\RuntimeErrorException;
+use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
 
 class MethodParameter
 {

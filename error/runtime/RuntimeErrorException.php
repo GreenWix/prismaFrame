@@ -1,10 +1,10 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame\error\runtime;
+namespace GreenWix\prismaFrame\error\runtime;
 
 
-use SociallHouse\prismaFrame\error\PrismaException;
+use GreenWix\prismaFrame\error\PrismaException;
 
 class RuntimeErrorException extends PrismaException
 {

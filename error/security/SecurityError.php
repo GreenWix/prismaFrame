@@ -1,10 +1,10 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame\error\security;
+namespace GreenWix\prismaFrame\error\security;
 
 
-use SociallHouse\prismaFrame\error\HTTPCodes;
+use GreenWix\prismaFrame\error\HTTPCodes;
 
 final class SecurityError
 {

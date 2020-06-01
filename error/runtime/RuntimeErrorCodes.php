@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame\error\runtime;
+namespace GreenWix\prismaFrame\error\runtime;
 
 
 interface RuntimeErrorCodes

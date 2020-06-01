@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame\error;
+namespace GreenWix\prismaFrame\error;
 
 
 interface HTTPCodes

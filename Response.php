@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SociallHouse\prismaFrame;
+namespace GreenWix\prismaFrame;
 
 
 class Response
