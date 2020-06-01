@@ -22,7 +22,7 @@ abstract class Controller
 	 */
 	final public function callMethod(string $name, string $httpMethod, array $args): array{
 		if(!isset($this->methods[$name])){
-			throw RuntimeError::UNKNOWN_METHOD();
+			throw RuntimeError::UNKNOWN_METHOD($this->getName(), $name);
 		}
 
 		return $this->methods[$name]->invoke($httpMethod, $args);

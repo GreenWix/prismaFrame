@@ -17,5 +17,6 @@ interface InternalErrorCodes
 	const PRISMAFRAME_ALREADY_STARTED = 0x08; // PrismaFrame уже запущен и выполнить данное действие нельзя
 	const WRONG_HTTP_METHOD = 0x09; // Метод хочет принимать HTTP методы, которые не поддерживаются PrismaFrame
 	const UNKNOWN_PARAMETER_TYPE = 0x0a;
+	const WRONG_ARGS_ORDER = 0x0b; // Порядок аргументов в php-doc не совпадает с порядком аргументов функции
 
 }

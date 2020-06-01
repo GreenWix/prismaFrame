@@ -30,12 +30,12 @@ final class InternalError
 		return new InternalErrorException(InternalErrorCodes::WRONG_HTTP_METHOD, "Ошибка в Php-doc'е метода \"{$controller}.{$method}\". HTTP метод \"{$httpMethod}\" не поддерживается");
 	}
 
-	public static function NOT_ENOUGH_ARGS(): InternalErrorException{
-		return new InternalErrorException(InternalErrorCodes::NOT_ENOUGH_ARGS, "Php-doc метода содержит упоминание не всех аргументов функции");
+	public static function NOT_ENOUGH_ARGS(string $controller, string $method): InternalErrorException{
+		return new InternalErrorException(InternalErrorCodes::NOT_ENOUGH_ARGS, "Php-doc метода \"{$controller}.{$method}\" содержит упоминание не всех аргументов функции");
 	}
 
-	public static function UNKNOWN_PARAMETER_TYPE(string $typeName): InternalErrorException{
-		return new InternalErrorException(InternalErrorCodes::UNKNOWN_PARAMETER_TYPE, "Тип {$typeName} аргумента функции не является поддерживаемым");
+	public static function UNKNOWN_PARAMETER_TYPE(string $controller, string $method, string $typeName): InternalErrorException{
+		return new InternalErrorException(InternalErrorCodes::UNKNOWN_PARAMETER_TYPE, "Тип {$typeName} аргумента метода \"{$controller}.{$method}\" не является поддерживаемым");
 	}
 
 	public static function ELEMENT_ALREADY_REGISTERED(string $typeName, string $elementName): InternalErrorException{
@@ -52,6 +52,10 @@ final class InternalError
 
 	public static function PRISMAFRAME_ALREADY_STARTED(string $message): InternalErrorException{
 		return new InternalErrorException(InternalErrorCodes::PRISMAFRAME_ALREADY_STARTED, $message);
+	}
+
+	public static function WRONG_ARGS_ORDER(string $controller, string $method): InternalErrorException{
+		return new InternalErrorException(InternalErrorCodes::WRONG_ARGS_ORDER, "Порядок аргументов в php-doc метода \"{$controller}.{$method}\" не совпадает с порядком аргументов функции");
 	}
 
 }

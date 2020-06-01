@@ -81,7 +81,7 @@ final class PrismaFrame
 			$method = $raw_2[1] ?? "";
 
 			return new Response(self::getController($controller)->callMethod($method, $httpMethod, $args), HTTPCodes::OK);
-		}catch(RuntimeErrorException $e){
+		}catch(Throwable $e){
 			return Error::make($e);
 		}
 	}

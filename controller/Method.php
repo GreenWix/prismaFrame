@@ -11,7 +11,7 @@ final class Method
 {
 
 	/** @var string */
-	private $name;
+	public $name;
 
 	/** @var MethodParameter[] */
 	private $parameters;
@@ -60,10 +60,12 @@ final class Method
 			if($param->required && !isset($args[$name])){
 				throw RuntimeError::BAD_INPUT("Parameter \"{$name}\" is required");
 			}
-			if($param->validate($args[$name], $result, $reason)){
-				$values[] = $result;
-			}else{
-				throw RuntimeError::BAD_VALIDATION_RESULT($reason === "" ? "Parameter \"{$name}\" accepts only " . implode("|", $param->types) ." types" : $reason);
+			if(isset($args[$name])) {
+				if ($param->validate($args[$name], $result, $reason)) {
+					$values[] = $result;
+				} else {
+					throw RuntimeError::BAD_VALIDATION_RESULT($reason === "" ? "Parameter \"{$name}\" accepts only " . $param->flatTypes . " types" : $reason);
+				}
 			}
 		}
 

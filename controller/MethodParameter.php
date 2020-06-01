@@ -18,6 +18,9 @@ class MethodParameter
 	/** @var string[] */
 	public $types;
 
+	/** @var string */
+	public $flatTypes;
+
 	/** @var string[] */
 	public $extraData;
 
@@ -34,6 +37,7 @@ class MethodParameter
 		$this->types = $types;
 		$this->extraData = $extraData;
 		$this->required = $required;
+		$this->flatTypes = implode("|", $types);
 	}
 
 	/**

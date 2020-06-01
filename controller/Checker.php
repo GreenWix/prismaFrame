@@ -22,15 +22,20 @@ final class Checker
 		'throws' => true,
 	];
 
+	const INTERNAL_CONTROLLER_METHODS = [
+		'getName' => true,
+		'callMethod' => true
+	];
+
 	/** @var array */
 	private static $supportedTypes = [];
 	private static $supportedTypesCustomErrors = [];
 
 	const ALLOWED_HTTP_METHODS = [
-		"GET"=> true,
-		"POST" => true,
-		"PATCH" => true,
-		"PUT" => true
+		'GET' => true,
+		'POST' => true,
+		'PATCH' => true,
+		'PUT' => true
 	];
 
 	private function __construct(){}
@@ -51,7 +56,7 @@ final class Checker
 		self::addSupportedType('string', static function(string $var, &$readyData, array $extraData): bool{
 			if(is_string($var)) {
 				if (isset($extraData[0])) {
-					if (!preg_match_all(implode(" ", $extraData[0]), $var)) {
+					if (!preg_match_all(implode(' ', $extraData[0]), $var)) {
 						return false;
 					}
 				}
@@ -61,18 +66,18 @@ final class Checker
 		}, true);
 
 		self::addSupportedType('array', static function(string $var, &$readyData, array $extraData): bool{
-			$readyData = explode(",", $var);
+			$readyData = explode(',', $var);
 			return true;
 		});
 
 		self::addSupportedType('bool', static function(string $var, &$readyData, array $extraData): bool{
 			switch($var){
-				case "true":
-				case "1":
+				case 'true':
+				case '1':
 					$readyData = true;
 					return true;
-				case "false":
-				case "0":
+				case 'false':
+				case '0':
 					$readyData = false;
 					return true;
 				default:
@@ -81,6 +86,9 @@ final class Checker
 		}, true);
 
 		self::addSupportedType('json', static function(string $var, &$readyData, array $extraData): bool{
+			// clear json_last_error()
+			json_encode(null);
+
 			$readyData = json_decode($var, true);
 			return json_last_error() === JSON_ERROR_NONE;
 		}, true);
@@ -105,12 +113,12 @@ final class Checker
 	public static function addSupportedType(string $name, Closure $validator, bool $makeAlsoArrayType = false, string $reasonOnBadValid = ""){
 		$ref = new ReflectionFunction($validator);
 		$returnType = $ref->getReturnType();
-		if($returnType === null || $returnType->getName() !== "bool"){
-			throw InternalError::WRONG_RETURN_TYPE("bool", "(Supported type " . $name . ")", "validator");
+		if($returnType === null || $returnType->getName() !== 'bool'){
+			throw InternalError::WRONG_RETURN_TYPE('bool', "(Supported type {$name})", 'validator');
 		}
 
 		if(isset(self::$supportedTypes[$name])){
-			throw InternalError::ELEMENT_ALREADY_REGISTERED("Поддерживаемый тип", $name);
+			throw InternalError::ELEMENT_ALREADY_REGISTERED('Поддерживаемый тип', $name);
 		}
 
 		self::$supportedTypes[$name] = $validator;
@@ -149,7 +157,7 @@ final class Checker
 
 		$res = (self::$supportedTypes[$name])($input, $var, $extraData);
 		if($res){ return true; }
-		$reason = self::$supportedTypesCustomErrors[$name] ?? "";
+		$reason = self::$supportedTypesCustomErrors[$name] ?? '';
 		return false;
 	}
 
@@ -163,12 +171,11 @@ final class Checker
 		$resMethods = [];
 		$c = new ReflectionClass($controller);
 		$controllerName = $controller->getName();
-		$methodName = '';
 
 		$methods = $c->getMethods(ReflectionMethod::IS_PUBLIC);
 		foreach ($methods as $method){
 			$methodName = $method->getName();
-			if($methodName === 'getName') continue;
+			if(isset(self::INTERNAL_CONTROLLER_METHODS[$methodName])) continue;
 
 			$comment = $method->getDocComment();
 			if($comment === false){
@@ -185,29 +192,38 @@ final class Checker
 				!isset($doc['return']) ||
 				$doc['return'][0] !== 'array'
 			){
-				throw InternalError::WRONG_RETURN_TYPE("array", $controllerName, $methodName);
+				throw InternalError::WRONG_RETURN_TYPE('array', $controllerName, $methodName);
 			}
 
 			if(!isset($doc['httpMethod'])){
 				throw InternalError::NO_SUPPORT_HTTP_METHODS();
 			}
 			
-			$httpMethods = explode("|", strtoupper(implode(" ", $doc['httpMethod'])));
+			$httpMethods = explode('|', strtoupper(implode(" ", $doc['httpMethod'])));
 			foreach ($httpMethods as $httpMethod) {
 				if (!isset(self::ALLOWED_HTTP_METHODS[$httpMethod])) {
-					throw InternalError::NO_SUPPORT_HTTP_METHODS();
+					throw InternalError::WRONG_HTTP_METHOD($controllerName, $methodName, $httpMethod);
 				}
 			}
 
-			$params = self::getParametersFromDocArray($doc);
+			$raw_params = self::getParametersFromDocArray($controllerName, $methodName, $doc);
+			$params = [];
+			$i = 0;
 			foreach ($method->getParameters() as $parameter){
-				if (!isset($params[$parameter->name])) {
-					throw InternalError::NOT_ENOUGH_ARGS();
+				if (!isset($raw_params[$i])) {
+					throw InternalError::NOT_ENOUGH_ARGS($controllerName, $methodName);
 				}
-				$params[$parameter->name]->required = !$parameter->isOptional();
+
+				$raw_param = $raw_params[$i];
+				if($raw_param->name !== $parameter->getName()){
+					throw InternalError::WRONG_ARGS_ORDER($controllerName, $methodName);
+				}
+				$raw_param->required = !$parameter->isOptional();
+				$params[$parameter->getName()] = $raw_param;
+				++$i;
 			}
 
-			$resMethods[] = new Method($methodName, $params, $httpMethods, $controller);
+			$resMethods[$methodName] = new Method($methodName, $params, $httpMethods, $controller);
 		}
 		return $resMethods;
 	}
@@ -236,33 +252,35 @@ final class Checker
 	}
 
 	/**
+	 * @param string $controller
+	 * @param string $method
 	 * @param array $doc
 	 * @return MethodParameter[]
 	 * @throws InternalErrorException
 	 */
-	private static function getParametersFromDocArray(array $doc) : array {
+	private static function getParametersFromDocArray(string $controller, string $method, array $doc) : array {
 		$result = [];
 		foreach ($doc['param'] ?? [] as $param){
 
 			if(!isset($param[0], $param[1])) {
-				throw InternalError::BAD_DOC("Wrong @param");
+				throw InternalError::BAD_DOC('Wrong @param');
 			}
 			if($param[1]{0} !== "$"){
-				throw InternalError::BAD_DOC("@param \"" . $param[1] . "\" has bad name (without '$')");
+				throw InternalError::BAD_DOC("@param \"{$param[1]}\" has bad name (without '$')");
 			}
 			if(isset($result[$param[1]])){
-				throw InternalError::BAD_DOC("Duplicate @param \"" . $param[1] . "\"");
+				throw InternalError::BAD_DOC("Duplicate @param \"{$param[1]}\"");
 			}
 			$types = explode("|", $param[0]);
 			$extraData = $types;
 			array_shift($extraData);
 			foreach ($types as $type){
 				if(!isset(self::$supportedTypes[$type])){
-					throw InternalError::UNKNOWN_PARAMETER_TYPE($type);
+					throw InternalError::UNKNOWN_PARAMETER_TYPE($controller, $method, $type);
 				}
 			}
 			$param[1] = substr($param[1], 1);
-			$result[$param[1]] = new MethodParameter($param[1], $types, $extraData, false);
+			$result[] = new MethodParameter($param[1], $types, $extraData, false);
 		}
 		return $result;
 	}

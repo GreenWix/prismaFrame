@@ -22,8 +22,8 @@ final class RuntimeError
 		return new RuntimeErrorException(RuntimeErrorCodes::UNKNOWN_CONTROLLER, "Unknown controller", HTTPCodes::NOT_FOUND);
 	}
 
-	public static function UNKNOWN_METHOD(): RuntimeErrorException{
-		return new RuntimeErrorException(RuntimeErrorCodes::UNKNOWN_METHOD, "Unknown method", HTTPCodes::NOT_FOUND);
+	public static function UNKNOWN_METHOD(string $controllerName, string $methodName): RuntimeErrorException{
+		return new RuntimeErrorException(RuntimeErrorCodes::UNKNOWN_METHOD, "Unknown method \"{$controllerName}.{$methodName}\"", HTTPCodes::NOT_FOUND);
 	}
 
 	public static function BAD_METHOD_RUN(): RuntimeErrorException{
