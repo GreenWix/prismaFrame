@@ -119,4 +119,8 @@ final class PrismaFrame
 		self::$controllers[$controllerName] = $controller;
 	}
 
+	public static function addSupportedType(string $name, \Closure $validator, bool $makeAlsoArrayType = false, string $readonOnBadValid = ''){
+		Checker::addSupportedType($name, $validator, $makeAlsoArrayType, $readonOnBadValid);
+	}
+
 }
