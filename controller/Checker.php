@@ -27,7 +27,10 @@ final class Checker
 	private static $supportedTypesCustomErrors = [];
 
 	const ALLOWED_HTTP_METHODS = [
-		"get", "post", "patch", "put"
+		"GET"=> true,
+		"POST" => true,
+		"PATCH" => true,
+		"PUT" => true
 	];
 
 	private function __construct(){}
@@ -101,8 +104,9 @@ final class Checker
 	 */
 	public static function addSupportedType(string $name, Closure $validator, bool $makeAlsoArrayType = false, string $reasonOnBadValid = ""){
 		$ref = new ReflectionFunction($validator);
-		if($ref->getReturnType()->getName() !== "bool"){
-			throw InternalError::WRONG_RETURN_TYPE("bool");
+		$returnType = $ref->getReturnType();
+		if($returnType === null || $returnType->getName() !== "bool"){
+			throw InternalError::WRONG_RETURN_TYPE("bool", "(Supported type " . $name . ")", "validator");
 		}
 
 		if(isset(self::$supportedTypes[$name])){
@@ -158,31 +162,39 @@ final class Checker
 	public static function getControllerMethods(Controller $controller): array{
 		$resMethods = [];
 		$c = new ReflectionClass($controller);
+		$controllerName = $controller->getName();
+		$methodName = '';
+
 		$methods = $c->getMethods(ReflectionMethod::IS_PUBLIC);
 		foreach ($methods as $method){
+			$methodName = $method->getName();
+			if($methodName === 'getName') continue;
+
 			$comment = $method->getDocComment();
 			if($comment === false){
-				throw InternalError::NO_DOC();
+				throw InternalError::NO_DOC($controllerName, $methodName);
 			}
 
 			$doc = self::parseDoc($comment);
 
+			$returnType = $method->getReturnType();
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			if(
-				$method->getReturnType()->getName() !== 'array' ||
+				$returnType === null ||
+				$returnType->getName() !== 'array' ||
 				!isset($doc['return']) ||
 				$doc['return'][0] !== 'array'
 			){
-				throw InternalError::WRONG_RETURN_TYPE();
+				throw InternalError::WRONG_RETURN_TYPE("array", $controllerName, $methodName);
 			}
 
-			if(!isset($doc['method'])){
+			if(!isset($doc['httpMethod'])){
 				throw InternalError::NO_SUPPORT_HTTP_METHODS();
 			}
 			
-			$httpMethods = explode("|", strtolower(implode(" ", $doc['method'])));
+			$httpMethods = explode("|", strtoupper(implode(" ", $doc['httpMethod'])));
 			foreach ($httpMethods as $httpMethod) {
-				if (!in_array($httpMethod, self::ALLOWED_HTTP_METHODS)) {
+				if (!isset(self::ALLOWED_HTTP_METHODS[$httpMethod])) {
 					throw InternalError::NO_SUPPORT_HTTP_METHODS();
 				}
 			}
@@ -190,12 +202,12 @@ final class Checker
 			$params = self::getParametersFromDocArray($doc);
 			foreach ($method->getParameters() as $parameter){
 				if (!isset($params[$parameter->name])) {
-					throw InternalError::BAD_DOC("Controller's doc hasn't all parameters");
+					throw InternalError::NOT_ENOUGH_ARGS();
 				}
 				$params[$parameter->name]->required = !$parameter->isOptional();
 			}
 
-			$resMethods[] = new Method($method->getName(), $params, $httpMethods, $controller);
+			$resMethods[] = new Method($methodName, $params, $httpMethods, $controller);
 		}
 		return $resMethods;
 	}

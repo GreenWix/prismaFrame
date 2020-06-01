@@ -9,7 +9,9 @@
             "email": "aydansuper12@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "ext-json": "*"
+    },
     "description": "Framework for creating API",
     "autoload": {
         "psr-4": {

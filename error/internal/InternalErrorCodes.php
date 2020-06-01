@@ -15,6 +15,7 @@ interface InternalErrorCodes
 	const BAD_DOC = 0x06; // Ошибка в php-doc
 	const PRISMAFRAME_IS_NOT_STARTED = 0x07; // PrismaFrame еще не запущен и выполнить данное действие нельзя
 	const PRISMAFRAME_ALREADY_STARTED = 0x08; // PrismaFrame уже запущен и выполнить данное действие нельзя
+	const WRONG_HTTP_METHOD = 0x09; // Метод хочет принимать HTTP методы, которые не поддерживаются PrismaFrame
 	const UNKNOWN_PARAMETER_TYPE = 0x0a;
 
 }

@@ -14,16 +14,20 @@ final class InternalError
 
 	private function __construct(){}
 
-	public static function NO_DOC(): InternalErrorException{
-		return new InternalErrorException(InternalErrorCodes::NO_DOC, "Метод не содержит php-doc");
+	public static function NO_DOC(string $controller, string $method): InternalErrorException{
+		return new InternalErrorException(InternalErrorCodes::NO_DOC, "Метод \"{$controller}.{$method}\" не содержит php-doc");
 	}
 
-	public static function WRONG_RETURN_TYPE(string $typeName = "array"): InternalErrorException{
-		return new InternalErrorException(InternalErrorCodes::WRONG_RETURN_TYPE, "Метод должен возвращать тип ".$typeName);
+	public static function WRONG_RETURN_TYPE(string $typeName, string $controller, string $method): InternalErrorException{
+		return new InternalErrorException(InternalErrorCodes::WRONG_RETURN_TYPE, "Метод \"{$controller}.{$method}\" должен возвращать тип ".$typeName);
 	}
 
 	public static function NO_SUPPORT_HTTP_METHODS(): InternalErrorException{
-		return new InternalErrorException(InternalErrorCodes::NO_SUPPORT_HTTP_METHODS, "Php-doc метода должен содержать @method <GET|POST|PATCH|PUT>");
+		return new InternalErrorException(InternalErrorCodes::NO_SUPPORT_HTTP_METHODS, "Php-doc метода должен содержать @httpMethod <GET|POST|PATCH|PUT или несколько методов перечисленных через \"|\">");
+	}
+
+	public static function WRONG_HTTP_METHOD(string $controller, string $method, string $httpMethod): InternalErrorException{
+		return new InternalErrorException(InternalErrorCodes::WRONG_HTTP_METHOD, "Ошибка в Php-doc'е метода \"{$controller}.{$method}\". HTTP метод \"{$httpMethod}\" не поддерживается");
 	}
 
 	public static function NOT_ENOUGH_ARGS(): InternalErrorException{
