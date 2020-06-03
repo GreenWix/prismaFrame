@@ -4,6 +4,7 @@
 namespace GreenWix\prismaFrame;
 
 
+use GreenWix\prismaFrame\type\SupportedType;
 use ReflectionException;
 use GreenWix\prismaFrame\controller\Checker;
 use GreenWix\prismaFrame\controller\Controller;
@@ -119,8 +120,12 @@ final class PrismaFrame
 		self::$controllers[$controllerName] = $controller;
 	}
 
-	public static function addSupportedType(string $name, \Closure $validator, bool $makeAlsoArrayType = false, string $readonOnBadValid = ''){
-		Checker::addSupportedType($name, $validator, $makeAlsoArrayType, $readonOnBadValid);
+	public static function addSupportedTypeClosure(string $name, \Closure $validator, bool $makeAlsoArrayType = false, string $readonOnBadValid = ''){
+		Checker::addSupportedTypeClosure($name, $validator, $makeAlsoArrayType, $readonOnBadValid);
+	}
+
+	public static function addSupportedType(SupportedType $type){
+		Checker::addSupportedType($type);
 	}
 
 }

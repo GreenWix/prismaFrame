@@ -5,6 +5,8 @@ namespace GreenWix\prismaFrame\controller;
 
 
 use Closure;
+use GreenWix\prismaFrame\type\ArraySupportedType;
+use GreenWix\prismaFrame\type\SupportedType;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
@@ -45,7 +47,7 @@ final class Checker
 	 * @throws ReflectionException
 	 */
 	public static function initSupportedTypes(){
-		self::addSupportedType('int', static function(string $var, &$readyData, array $extraData): bool{
+		self::addSupportedTypeClosure('int', static function(string $var, &$readyData, array $extraData): bool{
 			if(is_int($var) || preg_match_all('/[^0-9]/', $var) === 0){
 				$readyData = intval($var);
 				return true;
@@ -53,7 +55,7 @@ final class Checker
 			return false;
 		}, true);
 
-		self::addSupportedType('string', static function(string $var, &$readyData, array $extraData): bool{
+		self::addSupportedTypeClosure('string', static function(string $var, &$readyData, array $extraData): bool{
 			if(is_string($var)) {
 				if (isset($extraData[0])) {
 					if (!preg_match_all(implode(' ', $extraData[0]), $var)) {
@@ -65,12 +67,12 @@ final class Checker
 			}else return false;
 		}, true);
 
-		self::addSupportedType('array', static function(string $var, &$readyData, array $extraData): bool{
+		self::addSupportedTypeClosure('array', static function(string $var, &$readyData, array $extraData): bool{
 			$readyData = explode(',', $var);
 			return true;
 		});
 
-		self::addSupportedType('bool', static function(string $var, &$readyData, array $extraData): bool{
+		self::addSupportedTypeClosure('bool', static function(string $var, &$readyData, array $extraData): bool{
 			switch($var){
 				case 'true':
 				case '1':
@@ -85,7 +87,7 @@ final class Checker
 			}
 		}, true);
 
-		self::addSupportedType('json', static function(string $var, &$readyData, array $extraData): bool{
+		self::addSupportedTypeClosure('json', static function(string $var, &$readyData, array $extraData): bool{
 			// clear json_last_error()
 			json_encode(null);
 
@@ -93,13 +95,20 @@ final class Checker
 			return json_last_error() === JSON_ERROR_NONE;
 		}, true);
 
-		self::addSupportedType('float', static function(string $var, &$readyData, array $extraData): bool{
+		self::addSupportedTypeClosure('float', static function(string $var, &$readyData, array $extraData): bool{
 			if(is_numeric($var)) {
 				$readyData = (float)$var;
 				return true;
 			}
 			return false;
 		}, true);
+	}
+
+	public static function addSupportedType(SupportedType $type){
+		self::$supportedTypes[$type->getName()] = $type;
+		if($type->isArrayType()){
+			self::addSupportedType(new ArraySupportedType("", [], $type->getName()));
+		}
 	}
 
 	/**
@@ -110,7 +119,7 @@ final class Checker
 	 * @throws InternalErrorException
 	 * @throws ReflectionException
 	 */
-	public static function addSupportedType(string $name, Closure $validator, bool $makeAlsoArrayType = false, string $reasonOnBadValid = ""){
+	public static function addSupportedTypeClosure(string $name, Closure $validator, bool $makeAlsoArrayType = false, string $reasonOnBadValid = ""){
 		$ref = new ReflectionFunction($validator);
 		$returnType = $ref->getReturnType();
 		if($returnType === null || $returnType->getName() !== 'bool'){
@@ -124,7 +133,7 @@ final class Checker
 		self::$supportedTypes[$name] = $validator;
 
 		if($makeAlsoArrayType){
-			self::addSupportedType($name . '[]', static function(string $var, &$readyData, array $extraData)use($name): bool{
+			self::addSupportedTypeClosure($name . '[]', static function(string $var, &$readyData, array $extraData)use($name): bool{
 				$readyData = [];
 				$part = null;
 				foreach(explode(",", $var) as $el){
@@ -155,10 +164,22 @@ final class Checker
 			throw RuntimeError::UNKNOWN_PARAMETER_TYPE($name);
 		}
 
-		$res = (self::$supportedTypes[$name])($input, $var, $extraData);
-		if($res){ return true; }
-		$reason = self::$supportedTypesCustomErrors[$name] ?? '';
-		return false;
+		$type = self::$supportedTypes[$name];
+
+		if($type instanceof SupportedType) {
+			try{
+				$var = $type->validate($input, $extraData);
+				return true;
+			}catch(RuntimeErrorException $e){
+				$reason = $e->getMessage();
+				return false;
+			}
+		}else{
+			$res = ($type)($input, $var, $extraData);
+			if($res){ return true; }
+			$reason = self::$supportedTypesCustomErrors[$name] ?? '';
+			return false;
+		}
 	}
 
 	/**
