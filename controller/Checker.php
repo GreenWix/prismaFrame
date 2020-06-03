@@ -48,7 +48,7 @@ final class Checker
 	 */
 	public static function initSupportedTypes(){
 		self::addSupportedTypeClosure('int', static function(string $var, &$readyData, array $extraData): bool{
-			if(is_int($var) || preg_match_all('/[^0-9]/', $var) === 0){
+			if(is_numeric($var)){
 				$readyData = intval($var);
 				return true;
 			}
@@ -56,15 +56,13 @@ final class Checker
 		}, true);
 
 		self::addSupportedTypeClosure('string', static function(string $var, &$readyData, array $extraData): bool{
-			if(is_string($var)) {
-				if (isset($extraData[0])) {
-					if (!preg_match_all(implode(' ', $extraData[0]), $var)) {
-						return false;
-					}
+			/*if (isset($extraData[0])) {
+				if (!preg_match_all(implode(' ', $extraData[0]), $var)) {
+					return false;
 				}
-				$readyData = $var;
-				return true;
-			}else return false;
+			}*/
+			$readyData = $var;
+			return true;
 		}, true);
 
 		self::addSupportedTypeClosure('array', static function(string $var, &$readyData, array $extraData): bool{
