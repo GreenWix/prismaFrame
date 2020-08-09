@@ -13,6 +13,3 @@ composer require greenwix/prismaframe:0.1
 ```
 
 Вместо 0.1 можете использовать интересующую Вас версию из [списка](https://github.com/GreenWix/prismaFrame/releases)
-
-## Руководство по использованию
-[Wiki](https://github.com/GreenWix/prismaFrame/wiki)

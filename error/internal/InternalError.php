@@ -54,6 +54,10 @@ final class InternalError
 		return new InternalErrorException(InternalErrorCodes::PRISMAFRAME_ALREADY_STARTED, $message);
 	}
 
+	public static function NO_SECURITY(): InternalErrorException{
+		return new InternalErrorException(InternalErrorCodes::NO_SECURITY, "Не установлен Security менеджер. Установите его при помощи метода PrismaFrame::setSecurity()");
+	}
+
 	public static function WRONG_ARGS_ORDER(string $controller, string $method): InternalErrorException{
 		return new InternalErrorException(InternalErrorCodes::WRONG_ARGS_ORDER, "Порядок аргументов в php-doc метода \"{$controller}.{$method}\" не совпадает с порядком аргументов функции");
 	}

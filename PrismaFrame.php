@@ -4,7 +4,9 @@
 namespace GreenWix\prismaFrame;
 
 
+use GreenWix\prismaFrame\security\Security;
 use GreenWix\prismaFrame\type\SupportedType;
+use Psr\Http\Message\ServerRequestInterface;
 use ReflectionException;
 use GreenWix\prismaFrame\controller\Checker;
 use GreenWix\prismaFrame\controller\Controller;
@@ -32,6 +34,9 @@ final class PrismaFrame
 	/** @var PrismaFrameSettings */
 	private static $settings;
 
+	/** @var Security */
+	private static $security;
+
 	/**
 	 * @param PrismaFrameSettings $settings
 	 * @throws InternalErrorException
@@ -46,7 +51,14 @@ final class PrismaFrame
 		return self::$settings->debug;
 	}
 
+	/**
+	 * @throws InternalErrorException
+	 */
 	public static function start(){
+		if(self::$security === null){
+			throw InternalError::NO_SECURITY();
+		}
+
 		self::$working = true;
 	}
 
@@ -55,18 +67,20 @@ final class PrismaFrame
 	}
 
 	/**
-	 * @param string $url
-	 * @param string $httpMethod
-	 * @param array $args
+	 * @param ServerRequestInterface $req
 	 * @return Response
 	 * @throws InternalErrorException
 	 */
-	public static function handle(string $url, string $httpMethod, array $args): Response{
+	public static function handle(ServerRequestInterface $req): Response{
 		if(!self::$working){
 			throw InternalError::PRISMAFRAME_IS_NOT_STARTED("PrismaFrame::handle() не может быть выполнен, пока PrismaFrame не запущен (PrismaFrame::start())");
 		}
 
 		try {
+			$url = $req->getUri()->getPath();
+			$httpMethod = $req->getMethod();
+			$args = $req->getQueryParams();
+
 			if (!isset($args["v"])) {
 				throw RuntimeError::BAD_INPUT("Parameter \"v\" is required");
 			}
@@ -80,6 +94,8 @@ final class PrismaFrame
 
 			$controller = $raw_2[0] ?? "";
 			$method = $raw_2[1] ?? "";
+
+			self::$security->beforeRequest($req);
 
 			return new Response(self::getController($controller)->callMethod($method, $httpMethod, $args), HTTPCodes::OK);
 		}catch(Throwable $e){
@@ -118,6 +134,13 @@ final class PrismaFrame
 		$controller->methods = Checker::getControllerMethods($controller);
 
 		self::$controllers[$controllerName] = $controller;
+	}
+
+	/**
+	 * @param Security $security
+	 */
+	public static function setSecurity(Security $security){
+		self::$security = $security;
 	}
 
 	public static function addSupportedTypeClosure(string $name, \Closure $validator, bool $makeAlsoArrayType = false, string $readonOnBadValid = ''){

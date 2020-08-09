@@ -15,6 +15,7 @@ use GreenWix\prismaFrame\error\internal\InternalError;
 use GreenWix\prismaFrame\error\internal\InternalErrorException;
 use GreenWix\prismaFrame\error\runtime\RuntimeError;
 use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
+use Throwable;
 
 final class Checker
 {
@@ -86,11 +87,13 @@ final class Checker
 		}, true);
 
 		self::addSupportedTypeClosure('json', static function(string $var, &$readyData, array $extraData): bool{
-			// clear json_last_error()
-			json_encode(null);
 
-			$readyData = json_decode($var, true);
-			return json_last_error() === JSON_ERROR_NONE;
+			try {
+				$readyData = json_decode($var, true, JSON_THROW_ON_ERROR);
+			}catch(Throwable $e){
+				return false;
+			}
+			return true;
 		}, true);
 
 		self::addSupportedTypeClosure('float', static function(string $var, &$readyData, array $extraData): bool{
@@ -255,7 +258,7 @@ final class Checker
 		$result = [];
 		foreach (explode("\n", $data) as $line){
 			$line = trim($line);
-			if($line{0} === '*' && $line{1} === ' ' && $line{2} === '@'){
+			if(isset($line{3}) && $line{0} === '*' && $line{1} === ' ' && $line{2} === '@'){
 				$raw = explode(' ', $line);
 				array_shift($raw); //Избавляемся от '*' в начале
 				$param = substr(array_shift($raw), 1);

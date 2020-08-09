@@ -9,7 +9,8 @@
         }
     ],
     "require": {
-        "ext-json": "*"
+        "ext-json": "*",
+        "laminas/laminas-diactoros": "^2.3"
     },
     "description": "Framework for creating API",
     "autoload": {

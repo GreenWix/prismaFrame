@@ -16,7 +16,8 @@ abstract class SupportedType
 	}
 
 	public function getName(): string{
-		return array_pop(explode("\\", get_class($this)));
+		$array = explode("\\", get_class($this));
+		return array_pop($array);
 	}
 
 	abstract public function isArrayType(): bool;
