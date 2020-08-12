@@ -78,8 +78,8 @@ final class PrismaFrame
 
 		try {
 			$url = $req->getUri()->getPath();
-			$httpMethod = $req->getMethod();
-			$args = $httpMethod === 'GET' ? $req->getQueryParams() : $req->getParsedBody();
+			$httpMethod = strtoupper($req->getMethod());
+			$args = $httpMethod === 'GET' ? $req->getQueryParams() : json_decode($req->getBody()->getContents(), true, JSON_THROW_ON_ERROR);
 
 			if (!isset($args["v"])) {
 				throw RuntimeError::BAD_INPUT("Parameter \"v\" is required");
