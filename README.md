@@ -6,14 +6,12 @@ prismaFrame - фреймворк для быстрого и удобного с�
 
 Код             |  Скриншот работы
 :-------------------------:|:-------------------------:
-![](https://sun9-22.userapi.com/9F1_r7ORKdE_C48dhdS1kXaaD-K6eoLTYqvD3w/lrJBP7xb60M.jpg)  |  ![](https://sun9-18.userapi.com/kHByNJskTLFUEFHQGE5D_JZb_te2g6AARUlzSQ/zQ7t63ZAn3w.jpg)
+![](https://sun9-22.userapi.com/9F1_r7ORKdE_C48dhdS1kXaaD-K6eoLTYqvD3w/lrJBP7xb60M.jpg)  |  ![](https://sun9-43.userapi.com/IU3iUs8b1s2eNKdBD6MTgjI28ILlyZjF6uAhjw/IAYLWUdvZag.jpg)
 
 ---
 
 ## Требования к установке
 + PHP 7.3+
-
----
 
 ## Установка
 
@@ -22,8 +20,6 @@ composer require greenwix/prismaframe:0.2.1
 ```
 
 Вместо 0.2.1 можете использовать интересующую Вас версию из [списка](https://github.com/GreenWix/prismaFrame/releases)
-
----
 
 ## Быстрый старт
 
