@@ -2,13 +2,18 @@
 
 prismaFrame - фреймворк для быстрого и удобного создания API
 
-Код             |  Браузер
+---
+
+Код             |  Скриншот работы
 :-------------------------:|:-------------------------:
-![](https://sun9-69.userapi.com/BHuXqdhTK3FWb_EumDv6TYMGmGCimTIGD52-IQ/HrWCD8W6x00.jpg)  |  ![](https://sun9-10.userapi.com/ohCez9MYGZtBjog7TG3tfXGU6EIflWGTKwwxPg/qf27TGYmWGs.jpg)
+![](https://sun9-22.userapi.com/9F1_r7ORKdE_C48dhdS1kXaaD-K6eoLTYqvD3w/lrJBP7xb60M.jpg)  |  ![](https://sun9-18.userapi.com/kHByNJskTLFUEFHQGE5D_JZb_te2g6AARUlzSQ/zQ7t63ZAn3w.jpg)
 
-## Быстрый старт
+---
 
-Если вы хотите использовать шаблон, чтобы быстро начать разрабатывать, посмотрите [prismaFrameExample](https://github.com/GreenWix/prismaFrameExample)
+## Требования к установке
++ PHP 7.3+
+
+---
 
 ## Установка
 
@@ -17,3 +22,9 @@ composer require greenwix/prismaframe:0.2.1
 ```
 
 Вместо 0.2.1 можете использовать интересующую Вас версию из [списка](https://github.com/GreenWix/prismaFrame/releases)
+
+---
+
+## Быстрый старт
+
+Если вы хотите использовать шаблон, чтобы быстро начать разрабатывать, посмотрите [prismaFrameExample](https://github.com/GreenWix/prismaFrameExample)
