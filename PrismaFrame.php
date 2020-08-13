@@ -4,9 +4,10 @@
 namespace GreenWix\prismaFrame;
 
 
-use GreenWix\prismaFrame\security\Security;
+use Closure;
 use GreenWix\prismaFrame\type\SupportedType;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionClass;
 use ReflectionException;
 use GreenWix\prismaFrame\controller\Checker;
 use GreenWix\prismaFrame\controller\Controller;
@@ -34,7 +35,6 @@ final class PrismaFrame
 	/** @var PrismaFrameSettings */
 	private static $settings;
 
-	/** @var Security */
 	private static $security;
 
 	/**
@@ -53,13 +53,53 @@ final class PrismaFrame
 
 	/**
 	 * @throws InternalErrorException
+	 * @throws ReflectionException
+	 * @throws RuntimeErrorException
 	 */
 	public static function start(){
 		if(self::$security === null){
 			throw InternalError::NO_SECURITY();
 		}
 
+		self::validateSecurity();
+
 		self::$working = true;
+	}
+
+	/**
+	 * @throws ReflectionException
+	 * @throws RuntimeErrorException
+	 */
+	private static function validateSecurity(): void{
+		$class = new ReflectionClass(self::$security);
+
+		if(!$class->hasMethod('beforeRequest')){
+			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь статический метод beforeRequest(ServerRequestInterface)');
+		}
+
+		$method = $class->getMethod('beforeRequest');
+		if(!$method->isStatic()){
+			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь СТАТИЧЕСКИЙ метод beforeRequest(ServerRequestInterface) с аргументом типа ' . ServerRequestInterface::class);
+		}
+
+		$params = $method->getParameters();
+		if(!isset($params[0]) || $params[0]->getType()->getName() !== ServerRequestInterface::class){
+			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь статический метод beforeRequest(ServerRequestInterface) с аргументом типа ' . ServerRequestInterface::class);
+		}
+
+		if(!$class->hasMethod('report')){
+			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь статический метод report(string)');
+		}
+
+		$method = $class->getMethod('report');
+		if(!$method->isStatic()){
+			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь СТАТИЧЕСКИЙ метод report(string) с аргументом типа string');
+		}
+
+		$params = $method->getParameters();
+		if(!isset($params[0]) || $params[0]->getType()->getName() !== 'string'){
+			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь статический метод report(string) с аргументом типа string');
+		}
 	}
 
 	public static function isWorking(): bool{
@@ -95,7 +135,7 @@ final class PrismaFrame
 			$controller = $raw_2[0] ?? "";
 			$method = $raw_2[1] ?? "";
 
-			self::$security->beforeRequest($req);
+			self::$security::beforeRequest($req);
 
 			return new Response(self::getController($controller)->callMethod($method, $httpMethod, $args), HTTPCodes::OK);
 		}catch(Throwable $e){
@@ -137,16 +177,27 @@ final class PrismaFrame
 	}
 
 	/**
-	 * @param Security $security
+	 * @param string $security Класс у Security
 	 */
-	public static function setSecurity(Security $security){
+	public static function setSecurity(string $security){
 		self::$security = $security;
 	}
 
-	public static function addSupportedTypeClosure(string $name, \Closure $validator, bool $makeAlsoArrayType = false, string $readonOnBadValid = ''){
-		Checker::addSupportedTypeClosure($name, $validator, $makeAlsoArrayType, $readonOnBadValid);
+	/**
+	 * @param string $name
+	 * @param Closure $validator
+	 * @param bool $makeAlsoArrayType
+	 * @param string $reasonOnBadValid
+	 * @throws InternalErrorException
+	 * @throws ReflectionException
+	 */
+	public static function addSupportedTypeClosure(string $name, Closure $validator, bool $makeAlsoArrayType = false, string $reasonOnBadValid = ''){
+		Checker::addSupportedTypeClosure($name, $validator, $makeAlsoArrayType, $reasonOnBadValid);
 	}
 
+	/**
+	 * @param SupportedType $type
+	 */
 	public static function addSupportedType(SupportedType $type){
 		Checker::addSupportedType($type);
 	}
