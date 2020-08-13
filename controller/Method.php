@@ -52,7 +52,7 @@ final class Method
 	 */
 	public function invoke(string $httpMethod, array $args): array{
 		if(!isset($this->httpMethods[$httpMethod])){
-			throw RuntimeError::WRONG_HTTP_METHOD($this->flatHttpMethods);
+			throw RuntimeError::WRONG_HTTP_METHOD($httpMethod, $this->flatHttpMethods);
 		}
 
 		$values = [];

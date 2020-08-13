@@ -42,8 +42,8 @@ final class RuntimeError
 		return new RuntimeErrorException(RuntimeErrorCodes::UNKNOWN_PARAMETER_TYPE, "Type \"{$typeName}\" is not supported", HTTPCodes::BAD_REQUEST);
 	}
 
-	public static function WRONG_HTTP_METHOD(string $supportedHttpMethods): RuntimeErrorException{
-		return new RuntimeErrorException(RuntimeErrorCodes::WRONG_HTTP_METHOD, "This method supports only " . $supportedHttpMethods . " HTTP method(s)", HTTPCodes::METHOD_NOT_ALLOWED);
+	public static function WRONG_HTTP_METHOD(string $gotHttpMethod, string $supportedHttpMethods): RuntimeErrorException{
+		return new RuntimeErrorException(RuntimeErrorCodes::WRONG_HTTP_METHOD, "This method supports only " . $supportedHttpMethods . " HTTP method(s). Got " . $gotHttpMethod, HTTPCodes::METHOD_NOT_ALLOWED);
 	}
 
 	public static function WRONG_VERSION(): RuntimeErrorException{
