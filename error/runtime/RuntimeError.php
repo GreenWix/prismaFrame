@@ -39,15 +39,15 @@ final class RuntimeError
 	}
 
 	public static function UNKNOWN_PARAMETER_TYPE(string $typeName): RuntimeErrorException{
-		return new RuntimeErrorException(RuntimeErrorCodes::UNKNOWN_PARAMETER_TYPE, "Type \"{$typeName}\" is not supported");
+		return new RuntimeErrorException(RuntimeErrorCodes::UNKNOWN_PARAMETER_TYPE, "Type \"{$typeName}\" is not supported", HTTPCodes::BAD_REQUEST);
 	}
 
 	public static function WRONG_HTTP_METHOD(string $supportedHttpMethods): RuntimeErrorException{
-		return new RuntimeErrorException(RuntimeErrorCodes::WRONG_HTTP_METHOD, "This method supports only " . $supportedHttpMethods . " HTTP method(s)");
+		return new RuntimeErrorException(RuntimeErrorCodes::WRONG_HTTP_METHOD, "This method supports only " . $supportedHttpMethods . " HTTP method(s)", HTTPCodes::METHOD_NOT_ALLOWED);
 	}
 
 	public static function WRONG_VERSION(): RuntimeErrorException{
-		return new RuntimeErrorException(RuntimeErrorCodes::WRONG_VERSION, "This version is incompatible");
+		return new RuntimeErrorException(RuntimeErrorCodes::WRONG_VERSION, "This version is incompatible", HTTPCodes::BAD_REQUEST);
 	}
 
 }
