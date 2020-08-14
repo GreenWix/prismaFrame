@@ -24,3 +24,9 @@ composer require greenwix/prismaframe:0.2.1
 ## Быстрый старт
 
 Если вы хотите использовать шаблон, чтобы быстро начать разрабатывать, посмотрите [prismaFrameExample](https://github.com/GreenWix/prismaFrameExample)
+
+---
+
+## Документация
+
+[Wiki](https://github.com/GreenWix/prismaFrame/wiki)

@@ -258,7 +258,7 @@ final class Checker
 		$result = [];
 		foreach (explode("\n", $data) as $line){
 			$line = trim($line);
-			if(isset($line{3}) && $line{0} === '*' && $line{1} === ' ' && $line{2} === '@'){
+			if(isset($line[3]) && $line{0} === '*' && $line{1} === ' ' && $line{2} === '@'){
 				$raw = explode(' ', $line);
 				array_shift($raw); //Избавляемся от '*' в начале
 				$param = substr(array_shift($raw), 1);
@@ -287,7 +287,7 @@ final class Checker
 			if(!isset($param[0], $param[1])) {
 				throw InternalError::BAD_DOC('Wrong @param');
 			}
-			if($param[1]{0} !== "$"){
+			if($param[1][0] !== "$"){
 				throw InternalError::BAD_DOC("@param \"{$param[1]}\" has bad name (without '$')");
 			}
 			if(isset($result[$param[1]])){
