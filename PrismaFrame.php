@@ -86,7 +86,7 @@ final class PrismaFrame
 		if(!isset($params[0]) || $params[0]->getType()->getName() !== ServerRequestInterface::class){
 			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь статический метод beforeRequest(ServerRequestInterface $request, array $args) с аргументом типа ' . ServerRequestInterface::class);
 		}
-		if(!isset($params[1]) || $params[0]->getType()->getName() !== 'array'){
+		if(!isset($params[1]) || $params[1]->getType()->getName() !== 'array'){
 			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь статический метод beforeRequest(ServerRequestInterface $request, array $args) с аргументом типа array');
 		}
 
