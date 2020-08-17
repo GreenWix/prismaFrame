@@ -74,17 +74,20 @@ final class PrismaFrame
 		$class = new ReflectionClass(self::$security);
 
 		if(!$class->hasMethod('beforeRequest')){
-			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь статический метод beforeRequest(ServerRequestInterface)');
+			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь статический метод beforeRequest(ServerRequestInterface $request, array $args)');
 		}
 
 		$method = $class->getMethod('beforeRequest');
 		if(!$method->isStatic()){
-			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь СТАТИЧЕСКИЙ метод beforeRequest(ServerRequestInterface) с аргументом типа ' . ServerRequestInterface::class);
+			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь СТАТИЧЕСКИЙ метод beforeRequest(ServerRequestInterface $request, array $args) с аргументом типа ' . ServerRequestInterface::class);
 		}
 
 		$params = $method->getParameters();
 		if(!isset($params[0]) || $params[0]->getType()->getName() !== ServerRequestInterface::class){
-			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь статический метод beforeRequest(ServerRequestInterface) с аргументом типа ' . ServerRequestInterface::class);
+			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь статический метод beforeRequest(ServerRequestInterface $request, array $args) с аргументом типа ' . ServerRequestInterface::class);
+		}
+		if(!isset($params[1]) || $params[0]->getType()->getName() !== 'array'){
+			throw RuntimeError::BAD_VALIDATION_RESULT('Security класс должен иметь статический метод beforeRequest(ServerRequestInterface $request, array $args) с аргументом типа array');
 		}
 
 		if(!$class->hasMethod('report')){
@@ -135,7 +138,7 @@ final class PrismaFrame
 			$controller = $raw_2[0] ?? "";
 			$method = $raw_2[1] ?? "";
 
-			self::$security::beforeRequest($req);
+			self::$security::beforeRequest($req, $args);
 
 			return new Response(self::getController($controller)->callMethod($method, $httpMethod, $args), HTTPCodes::OK);
 		}catch(Throwable $e){
