@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 
-namespace GreenWix\prismaFrame\type\base;
+namespace GreenWix\prismaFrame\type\validators;
 
 
 use GreenWix\prismaFrame\error\runtime\RuntimeError;
@@ -11,6 +11,10 @@ use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
 use GreenWix\prismaFrame\type\TypeValidator;
 
 class BoolTypeValidator extends TypeValidator {
+
+	public function getFullTypeName(): string {
+		return "bool";
+	}
 
 	public function createAlsoArrayType(): bool {
 		return true;

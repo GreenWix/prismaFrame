@@ -60,13 +60,13 @@ final class Method
 			if($param->required && !isset($args[$name])){
 				throw RuntimeError::BAD_INPUT("Parameter \"{$name}\" is required");
 			}
-			if(isset($args[$name])) {
-				if ($param->validate($args[$name], $result, $reason)) {
-					$values[] = $result;
-				} else {
-					throw RuntimeError::BAD_VALIDATION_RESULT($reason === "" ? "Parameter \"{$name}\" accepts only " . $param->flatTypes . " types" : $reason);
-				}
+
+			if(!isset($args[$name])) {
+				continue;
 			}
+
+			$argValue = $args[$name];
+			$values[] = $param->validateAndGetValue($argValue);
 		}
 
 		return $this->controller->{$this->name}(...$values);

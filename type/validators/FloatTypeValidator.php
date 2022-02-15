@@ -3,14 +3,18 @@
 declare(strict_types=1);
 
 
-namespace GreenWix\prismaFrame\type\base;
+namespace GreenWix\prismaFrame\type\validators;
 
 
 use GreenWix\prismaFrame\error\runtime\RuntimeError;
 use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
 use GreenWix\prismaFrame\type\TypeValidator;
 
-class IntTypeValidator extends TypeValidator {
+class FloatTypeValidator extends TypeValidator {
+
+	public function getFullTypeName(): string {
+		return "float";
+	}
 
 	public function createAlsoArrayType(): bool {
 		return true;
@@ -19,9 +23,9 @@ class IntTypeValidator extends TypeValidator {
 	/**
 	 * @throws RuntimeErrorException
 	 */
-	public function validateAndGetValue(string $var, array $extraData): int {
-		if(is_numeric($var)){
-			return intval($var);
+	public function validateAndGetValue(string $var, array $extraData): float {
+		if(is_numeric($var)) {
+			return (float)$var;
 		}
 
 		throw RuntimeError::BAD_VALIDATION_RESULT();

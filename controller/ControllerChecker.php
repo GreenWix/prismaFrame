@@ -6,7 +6,8 @@ namespace GreenWix\prismaFrame\controller;
 
 use Closure;
 use GreenWix\prismaFrame\PrismaFrame;
-use GreenWix\prismaFrame\type\ArrayDerivedTypeValidator;
+use GreenWix\prismaFrame\type\TypedArrayTypeValidator;
+use GreenWix\prismaFrame\type\TypeManager;
 use GreenWix\prismaFrame\type\TypeValidator;
 use ReflectionClass;
 use ReflectionException;
@@ -22,10 +23,11 @@ use Throwable;
 class ControllerChecker
 {
 
-	protected $prismaFrame;
+	/** @var TypeManager */
+	protected $typeManager;
 
-	public function __construct(PrismaFrame $prismaFrame){
-		$this->prismaFrame = $prismaFrame;
+	public function __construct(TypeManager $typeManager){
+		$this->typeManager = $typeManager;
 	}
 
 	/**
@@ -91,7 +93,7 @@ class ControllerChecker
 	 * @throws InternalErrorException
 	 */
 	protected function checkAndGetParameters(string $controllerName, string $methodName, ReflectionMethod $method, array $doc): array{
-		$parameters = $this->getParametersFromDocArray($controllerName, $methodName, $doc);
+		$parameters = $this->getParametersFromDocArray($doc);
 		$resultParameters = [];
 
 		$i = 0;
@@ -108,11 +110,25 @@ class ControllerChecker
 			$parameter->required = !$methodParameter->isOptional();
 			$resultParameters[$methodParameter->getName()] = $parameter;
 
+			$this->checkParameterType($controllerName, $methodName, $methodParameter);
 
 			++$i;
 		}
 
 		return $resultParameters;
+	}
+
+	// todo отказаться от этой ереси с протаскиванием controllerName и methodName по всем методам и просто нормально использовать эксепшены
+
+	/**
+	 * @throws InternalErrorException
+	 */
+	protected function checkParameterType(string $controllerName, string $methodName, ReflectionParameter $parameter): void{
+		$typeName = $parameter->getType()->getName();
+
+		if(!$this->typeManager->hasTypeValidator($typeName)){
+			throw InternalError::UNKNOWN_PARAMETER_TYPE($controllerName, $methodName, $typeName);
+		}
 	}
 
 	protected function getHttpMethods(array $doc): array{
@@ -175,36 +191,43 @@ class ControllerChecker
 	}
 
 	/**
-	 * @param string $controller
-	 * @param string $method
 	 * @param array $doc
 	 * @return MethodParameter[]
 	 * @throws InternalErrorException
 	 */
-	private function getParametersFromDocArray(string $controller, string $method, array $doc): array {
+	private function getParametersFromDocArray(array $doc): array {
 		$result = [];
+
 		foreach ($doc['param'] ?? [] as $param){
+			/* просто напомню как в доке это лежит
+			 * @param type $var some extra data
+			 *
+			 * соответственно в $param будет
+			 * ["type", "$var", "some", "extra", "data"]
+			 */
 
 			if(!isset($param[0], $param[1])) {
 				throw InternalError::BAD_DOC('Wrong @param');
 			}
-			if($param[1][0] !== "$"){
-				throw InternalError::BAD_DOC("@param \"{$param[1]}\" has bad name (without '$')");
+
+			$type = array_shift($param);
+			$parameterName = array_shift($param);
+
+			if($parameterName[0] !== "$"){
+				throw InternalError::BAD_DOC("@param \"{$parameterName}\" has bad name (without '$')");
 			}
-			if(isset($result[$param[1]])){
-				throw InternalError::BAD_DOC("Duplicate @param \"{$param[1]}\"");
+
+			if(isset($result[$parameterName])){
+				throw InternalError::BAD_DOC("Duplicate @param \"{$parameterName}\"");
 			}
-			$types = explode("|", $param[0]);
-			$extraData = $types;
-			array_shift($extraData);
-			foreach ($types as $type){
-				if(!isset($this->supportedTypes[$type])){
-					throw InternalError::UNKNOWN_PARAMETER_TYPE($controller, $method, $type);
-				}
-			}
-			$param[1] = substr($param[1], 1);
-			$result[] = new MethodParameter($param[1], $types, $extraData, false);
+
+			$extraData = $param;
+
+			$parameterName = substr($parameterName, 1); // убираем $
+
+			$result[] = new MethodParameter($this->typeManager, $parameterName, $type, $extraData, false);
 		}
+
 		return $result;
 	}
 
