@@ -4,11 +4,11 @@
 namespace GreenWix\prismaFrame\type;
 
 
-use GreenWix\prismaFrame\controller\Checker;
+use GreenWix\prismaFrame\controller\ControllerChecker;
 use GreenWix\prismaFrame\error\runtime\RuntimeError;
 use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
 
-class ArraySupportedType extends SupportedType{
+class ArrayDerivedTypeValidator extends TypeValidator{
 
 	private $elementsName;
 
@@ -21,7 +21,7 @@ class ArraySupportedType extends SupportedType{
 		return $this->elementsName . '[]';
 	}
 
-	public function isArrayType(): bool{
+	public function createAlsoArrayType(): bool{
 		return false;
 	}
 
@@ -31,11 +31,11 @@ class ArraySupportedType extends SupportedType{
 	 * @return array
 	 * @throws RuntimeErrorException
 	 */
-	public function validate(string $var, array $extraData): array{
+	public function validateAndGetValue(string $var, array $extraData): array{
 		$readyData = [];
 		$part = null;
 		foreach(explode(",", $var) as $el){
-			if(Checker::validateSupportedType($this->elementsName, $el, $part, $extraData, $reason)){
+			if(ControllerChecker::validateSupportedType($this->elementsName, $el, $part, $extraData, $reason)){
 				$readyData[] = $part;
 			}else{
 				throw RuntimeError::BAD_VALIDATION_RESULT($reason);

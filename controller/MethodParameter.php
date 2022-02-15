@@ -4,7 +4,10 @@
 namespace GreenWix\prismaFrame\controller;
 
 
+use GreenWix\prismaFrame\error\runtime\RuntimeError;
 use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
+use GreenWix\prismaFrame\PrismaFrame;
+use Throwable;
 
 class MethodParameter
 {
@@ -24,6 +27,9 @@ class MethodParameter
 	/** @var string[] */
 	public $extraData;
 
+	/** @var PrismaFrame */
+	private $prismaFrame;
+
 	/**
 	 * ControllerParameter constructor.
 	 * @param string $name
@@ -31,32 +37,35 @@ class MethodParameter
 	 * @param array $extraData
 	 * @param bool $required
 	 */
-	public function __construct(string $name, array $types, array $extraData, bool $required)
+	public function __construct(PrismaFrame $prismaFrame, string $name, array $types, array $extraData, bool $required)
 	{
 		$this->name = $name;
 		$this->types = $types;
 		$this->extraData = $extraData;
 		$this->required = $required;
 		$this->flatTypes = implode("|", $types);
+
+		$this->prismaFrame = $prismaFrame;
 	}
 
 	/**
 	 * @param string $input
-	 * @param $var
-	 * @param $reason
-	 * @return bool
+	 * @return mixed
 	 * @throws RuntimeErrorException
 	 */
-	public function validate(string $input, &$var, &$reason): bool{
-		$r = "";
+	public function validateAndGetValue(string $input){
+		$reasons = [];
+		$typeManager = $this->prismaFrame->getTypeManager();
+
 		foreach ($this->types as $type){
-			if(Checker::validateSupportedType($type, $input, $var, $this->extraData, $r)){
-				return true;
-			}elseif($r !== ""){
-				$reason = $r;
+			try {
+				return $typeManager->validateSupportedType($type, $input, $this->extraData);
+			}catch(Throwable $e){
+				$reasons[] = $type . ": " . $e->getMessage();
 			}
 		}
-		return false;
+
+		throw RuntimeError::BAD_VALIDATION_RESULT("");
 	}
 
 }
