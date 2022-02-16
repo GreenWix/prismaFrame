@@ -6,6 +6,7 @@ namespace GreenWix\prismaFrame\controller;
 
 use GreenWix\prismaFrame\error\runtime\RuntimeError;
 use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
+use GreenWix\prismaFrame\type\TypeManagerException;
 
 final class Method
 {
@@ -49,6 +50,7 @@ final class Method
 	 * @param array $args
 	 * @return array
 	 * @throws RuntimeErrorException
+	 * @throws TypeManagerException
 	 */
 	public function invoke(string $httpMethod, array $args): array{
 		if(!isset($this->httpMethods[strtoupper($httpMethod)])){

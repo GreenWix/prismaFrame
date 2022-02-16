@@ -9,7 +9,7 @@ abstract class TypeValidator
 
 	/**
 	 * Возвращает полный неймспейс класса, который формирует данный валидатор
-	 * @return string
+	 * @return string ClassName::class, например User::class
 	 */
 	abstract public function getFullTypeName(): string;
 

@@ -3,12 +3,8 @@
 
 namespace GreenWix\prismaFrame\controller;
 
-
-use GreenWix\prismaFrame\error\runtime\RuntimeError;
-use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
-use GreenWix\prismaFrame\PrismaFrame;
 use GreenWix\prismaFrame\type\TypeManager;
-use Throwable;
+use GreenWix\prismaFrame\type\TypeManagerException;
 
 class MethodParameter
 {
@@ -40,7 +36,7 @@ class MethodParameter
 	/**
 	 * @param string $input
 	 * @return mixed
-	 * @throws RuntimeErrorException
+	 * @throws TypeManagerException
 	 */
 	public function validateAndGetValue(string $input){
 		$typeManager = $this->typeManager;

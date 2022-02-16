@@ -33,7 +33,7 @@ class TypedArrayTypeValidator extends TypeValidator{
 	 * @param string $var
 	 * @param array $extraData
 	 * @return array
-	 * @throws RuntimeErrorException
+	 * @throws TypeManagerException
 	 */
 	public function validateAndGetValue(string $var, array $extraData): array{
 		$result = [];

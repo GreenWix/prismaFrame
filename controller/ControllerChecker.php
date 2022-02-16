@@ -93,24 +93,24 @@ class ControllerChecker
 	 * @throws InternalErrorException
 	 */
 	protected function checkAndGetParameters(string $controllerName, string $methodName, ReflectionMethod $method, array $doc): array{
-		$parameters = $this->getParametersFromDocArray($doc);
+		$docParameters = $this->getParametersFromDocArray($doc);
 		$resultParameters = [];
 
 		$i = 0;
 		foreach ($method->getParameters() as $methodParameter){
-			if (!isset($parameters[$i])) {
+			if (!isset($docParameters[$i])) {
 				throw InternalError::NOT_ENOUGH_ARGS($controllerName, $methodName);
 			}
 
-			$parameter = $parameters[$i];
-			if($parameter->name !== $methodParameter->getName()){
+			$docParameter = $docParameters[$i];
+			if($docParameter->name !== $methodParameter->getName()){
 				throw InternalError::WRONG_ARGS_ORDER($controllerName, $methodName);
 			}
 
-			$parameter->required = !$methodParameter->isOptional();
-			$resultParameters[$methodParameter->getName()] = $parameter;
+			$docParameter->required = !$methodParameter->isOptional();
+			$resultParameters[$methodParameter->getName()] = $docParameter;
 
-			$this->checkParameterType($controllerName, $methodName, $methodParameter);
+			$this->checkParameterType($controllerName, $methodName, $methodParameter, $docParameter);
 
 			++$i;
 		}
@@ -123,11 +123,12 @@ class ControllerChecker
 	/**
 	 * @throws InternalErrorException
 	 */
-	protected function checkParameterType(string $controllerName, string $methodName, ReflectionParameter $parameter): void{
-		$typeName = $parameter->getType()->getName();
+	protected function checkParameterType(string $controllerName, string $methodName, ReflectionParameter $methodParameter, MethodParameter $docParameter): void{
+		$methodParameterTypeName = $methodParameter->getType()->getName();
+		$docParameterTypeName = $docParameter->typeName;
 
-		if(!$this->typeManager->hasTypeValidator($typeName)){
-			throw InternalError::UNKNOWN_PARAMETER_TYPE($controllerName, $methodName, $typeName);
+		if(!$this->typeManager->hasTypeValidator($methodParameterTypeName)){
+			throw InternalError::UNKNOWN_PARAMETER_TYPE($controllerName, $methodName, $methodParameterTypeName);
 		}
 	}
 

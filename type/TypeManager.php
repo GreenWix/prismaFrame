@@ -8,7 +8,6 @@ namespace GreenWix\prismaFrame\type;
 
 use GreenWix\prismaFrame\error\runtime\RuntimeError;
 use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
-use GreenWix\prismaFrame\PrismaFrame;
 use GreenWix\prismaFrame\type\validators\ArrayTypeValidator;
 use GreenWix\prismaFrame\type\validators\BoolTypeValidator;
 use GreenWix\prismaFrame\type\validators\FloatTypeValidator;
@@ -44,12 +43,10 @@ class TypeManager {
 	 * @param string $input
 	 * @param array $extraData
 	 * @return mixed
-	 * @throws RuntimeErrorException
+	 * @throws TypeManagerException
 	 */
 	public function validateTypedInput(string $typeName, string $input, array $extraData = []){
-		if(!isset($this->types[$typeName])){
-			throw RuntimeError::UNKNOWN_PARAMETER_TYPE($typeName);
-		}
+		$this->checkTypeValidatorExistence($typeName);
 
 		$type = $this->types[$typeName];
 
@@ -58,6 +55,27 @@ class TypeManager {
 
 	public function hasTypeValidator(string $typeName): bool{
 		return isset($this->types[$typeName]);
+	}
+
+	/**
+	 * @param string $typeName
+	 * @return TypeValidator
+	 * @throws TypeManagerException
+	 */
+	public function getTypeValidator(string $typeName): TypeValidator{
+		$this->checkTypeValidatorExistence($typeName);
+
+		return $this->types[$typeName];
+	}
+
+	/**
+	 * @param string $typeName
+	 * @throws TypeManagerException
+	 */
+	public function checkTypeValidatorExistence(string $typeName): void{
+		if(!$this->hasTypeValidator($typeName)){
+			throw new TypeManagerException("No validator for type " . $typeName);
+		}
 	}
 
 }

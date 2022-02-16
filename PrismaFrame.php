@@ -9,6 +9,7 @@ use GreenWix\prismaFrame\event\EventsHandler;
 use GreenWix\prismaFrame\security\Security;
 use GreenWix\prismaFrame\settings\PrismaFrameSettings;
 use GreenWix\prismaFrame\type\TypeManager;
+use GreenWix\prismaFrame\type\TypeValidator;
 
 class PrismaFrame
 {
@@ -54,6 +55,10 @@ class PrismaFrame
 
 	public function getTypeManager(): TypeManager{
 		return $this->typeManager;
+	}
+
+	public function addTypeValidator(TypeValidator $validator): void{
+		$this->typeManager->addTypeValidator($validator);
 	}
 
 	public function isDebug(): bool{
