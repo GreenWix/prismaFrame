@@ -11,7 +11,7 @@ use GreenWix\prismaFrame\type\TypeValidator;
 class ArrayValidator extends TypeValidator {
 
 	public function getFullTypeName(): string {
-		return "string";
+		return "array";
 	}
 
 	public function createAlsoArrayType(): bool {
