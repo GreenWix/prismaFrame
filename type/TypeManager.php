@@ -37,7 +37,7 @@ class TypeManager {
 	public function addTypeValidator(TypeValidator $validator): void{
 		$docTypeName = $validator->getDocTypeName();
 		if(isset($this->types[$docTypeName])){
-			throw new TypeManagerException("The type with name \"$docTypeName\" is already busy. Please choose a different name for it");
+			throw new TypeManagerException("The type with name \"$docTypeName\" is already busy. Please choose a different name for " . get_class($validator));
 		}
 
 		$this->types[$docTypeName] = $validator;
