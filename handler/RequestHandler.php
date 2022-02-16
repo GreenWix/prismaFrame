@@ -8,8 +8,6 @@ namespace GreenWix\prismaFrame\handler;
 
 use GreenWix\prismaFrame\error\Error;
 use GreenWix\prismaFrame\error\HTTPCodes;
-use GreenWix\prismaFrame\error\internal\InternalError;
-use GreenWix\prismaFrame\error\internal\InternalErrorException;
 use GreenWix\prismaFrame\error\runtime\RuntimeError;
 use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
 use GreenWix\prismaFrame\event\request\AfterRequestEvent;
@@ -29,47 +27,48 @@ class RequestHandler {
 	}
 
 	/**
-	 * @param ServerRequestInterface $req
+	 * @param ServerRequestInterface $request
 	 * @return Response
-	 * @throws InternalErrorException
 	 */
-	public function handle(ServerRequestInterface $req): Response{
+	public function handle(ServerRequestInterface $request): Response{
 		$prismaFrame = $this->prismaFrame;
-
-		if(!$prismaFrame->isWorking()){
-			throw InternalError::PRISMAFRAME_IS_NOT_STARTED("Обработка запроса не может быть выполнена, пока PrismaFrame не запущен: PrismaFrame->start()");
-		}
 
 		$eventsHandler = $prismaFrame->getEventsHandler();
 
 		try {
-			$url = $req->getUri()->getPath();
-			$httpMethod = strtoupper($req->getMethod());
-			$queryParams = $req->getQueryParams();
+			$url = $request->getUri()->getPath();
+			$httpMethod = strtoupper($request->getMethod());
+			$queryParams = $request->getQueryParams();
 
-			$args = $this->getRequestArgs($req, $httpMethod);
+			$args = $this->getRequestArgs($request, $httpMethod);
 
 			$this->checkVersion($queryParams);
 
 			[$controller, $method] = $this->getControllerNameAndMethod($url);
 
-
-			$event = new BeforeRequestEvent();
+			$event = new BeforeRequestEvent($request, $controller, $method, $args);
 			$eventsHandler->beforeRequest($event);
 
 			$controllerManager = $prismaFrame->getControllerManager();
 			$controller = $controllerManager->getController($controller);
-			$response = new Response($controller->callMethod($method, $httpMethod, $args), HTTPCodes::OK);
 
-			return $response;
+			return new Response($controller->callMethod($method, $httpMethod, $args), HTTPCodes::OK);
 		}catch(Throwable $e){
 			return Error::make($e);
 		}finally{
-			$event = new AfterRequestEvent();
-			$eventsHandler->afterRequest($event);
+			if(isset($controller, $method, $args, $response)) {
+				$event = new AfterRequestEvent($request, $controller, $method, $args, $response);
+				$eventsHandler->afterRequest($event);
+			}
 		}
 	}
 
+	/**
+	 * @param ServerRequestInterface $req
+	 * @param string $httpMethod
+	 * @return array
+	 * @throws RuntimeErrorException
+	 */
 	private function getRequestArgs(ServerRequestInterface $req, string $httpMethod): array{
 		$parsedBody = $req->getParsedBody();
 		$queryParams = $req->getQueryParams();
@@ -106,11 +105,13 @@ class RequestHandler {
 	}
 
 	private function getControllerNameAndMethod(string $url): array{
-		$raw = explode("/", $url, 2);
-		$raw_2 = explode(".", $raw[1] ?? "", 2);
+		$hostAndControllerAndMethod = explode("/", $url, 2);
 
-		$controller = $raw_2[0] ?? "";
-		$method = $raw_2[1] ?? "";
+		$controllerAndMethod = $hostAndControllerAndMethod[1];
+		$controllerAndMethodArray = explode(".", $controllerAndMethod ?? "", 2);
+
+		$controller = $controllerAndMethodArray[0] ?? "";
+		$method = $controllerAndMethodArray[1] ?? "";
 
 		return [$controller, $method];
 	}
