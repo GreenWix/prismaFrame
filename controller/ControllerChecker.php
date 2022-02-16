@@ -66,7 +66,7 @@ class ControllerChecker
 
 		$doc = self::parseDoc($comment);
 
-		$this->checkReturnType($method, $controllerName);
+		$this->checkReturnType($method, $controllerName, $doc);
 
 		if(!isset($doc['httpMethod'])){
 			throw InternalError::NO_SUPPORT_HTTP_METHODS();
@@ -145,9 +145,10 @@ class ControllerChecker
 	/**
 	 * @param ReflectionMethod $method
 	 * @param string $controllerName
+	 * @param array $doc
 	 * @throws InternalErrorException
 	 */
-	protected function checkReturnType(ReflectionMethod $method, string $controllerName): void{
+	protected function checkReturnType(ReflectionMethod $method, string $controllerName, array $doc): void{
 		$returnType = $method->getReturnType();
 
 		if(
@@ -156,8 +157,7 @@ class ControllerChecker
 			!isset($doc['return']) ||
 			$doc['return'][0] !== 'array'
 		){
-			$docReturnType = $doc['return'][0] ?? "<пусто>";
-			throw InternalError::WRONG_RETURN_TYPE('array', $returnType, $docReturnType, $controllerName, $method->getName());
+			throw InternalError::WRONG_RETURN_TYPE('array', $returnType, $doc, $controllerName, $method->getName());
 		}
 	}
 

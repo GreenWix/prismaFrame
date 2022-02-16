@@ -20,11 +20,11 @@ final class InternalError
 		return new InternalErrorException(InternalErrorCodes::NO_DOC, "Метод \"{$controller}.{$method}\" не содержит php-doc");
 	}
 
-	public static function WRONG_RETURN_TYPE(string $typeName, ?ReflectionNamedType $functionReturnType, string $docReturnTypeName, string $controller, string $method): InternalErrorException{
+	public static function WRONG_RETURN_TYPE(string $typeName, ?ReflectionNamedType $functionReturnType, array $doc, string $controller, string $method): InternalErrorException{
 		$functionReturnTypeName = $functionReturnType === null ? "<пусто>" : $functionReturnType->getName();
 
-		return new InternalErrorException(InternalErrorCodes::WRONG_RETURN_TYPE, "Метод \"{$controller}.{$method}\" должен возвращать тип ".$typeName .
-		"Возвращаемый тип функции: " . $functionReturnTypeName . ". Возвращаемый тип в PhpDoc: " . $docReturnTypeName);
+		return new InternalErrorException(InternalErrorCodes::WRONG_RETURN_TYPE, "Метод \"{$controller}.{$method}\" должен возвращать тип ".$typeName . ". " .
+		"Возвращаемый тип функции: " . $functionReturnTypeName . ". PhpDoc: " . implode("\n", $doc));
 	}
 
 	public static function NO_SUPPORT_HTTP_METHODS(): InternalErrorException{
