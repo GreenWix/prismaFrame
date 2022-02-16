@@ -125,13 +125,13 @@ class ControllerChecker
 	 * @throws InternalErrorException
 	 */
 	protected function checkParameterType(string $controllerName, string $methodName, ReflectionParameter $methodParameter, MethodParameter $docParameter): void{
-		$methodParameterTypeName = $methodParameter->getType()->getName();
+		//$methodParameterTypeName = $methodParameter->getType()->getName();
 		$docParameterTypeName = $docParameter->typeName;
 
 		$typeManager = $this->prismaFrame->getTypeManager();
 
-		if(!$typeManager->hasTypeValidator($methodParameterTypeName)){
-			throw InternalError::UNKNOWN_PARAMETER_TYPE($controllerName, $methodName, $methodParameterTypeName);
+		if(!$typeManager->hasTypeValidator($docParameterTypeName)){
+			throw InternalError::UNKNOWN_PARAMETER_TYPE($controllerName, $methodName, $docParameterTypeName);
 		}
 	}
 
