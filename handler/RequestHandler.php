@@ -54,7 +54,7 @@ class RequestHandler {
 
 			return new Response($controller->callMethod($method, $httpMethod, $args), HTTPCodes::OK);
 		}catch(Throwable $e){
-			return Error::make($e);
+			return Error::make($prismaFrame, $e);
 		}finally{
 			if(isset($controller, $method, $args, $response)) {
 				$event = new AfterRequestEvent($request, $controller, $method, $args, $response);

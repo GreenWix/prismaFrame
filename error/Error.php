@@ -14,7 +14,7 @@ final class Error
 
 	private function __construct(){}
 
-	public static function make(Throwable $e): Response{
+	public static function make(PrismaFrame $prismaFrame, Throwable $e): Response{
 		if($e instanceof PrismaException) {
 			$id = $e->id;
 			$httpCode = $e->httpCode;
@@ -24,7 +24,7 @@ final class Error
 		}
 		$message = $e->getMessage();
 
-		if (!PrismaFrame::isDebug() && $httpCode === HTTPCodes::INTERNAL_SERVER_ERROR) {
+		if (!$prismaFrame->isDebug() && $httpCode === HTTPCodes::INTERNAL_SERVER_ERROR) {
 			$message = "Internal server error";
 			$id = RuntimeErrorCodes::SECURITY;
 		}
