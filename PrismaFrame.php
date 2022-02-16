@@ -9,7 +9,6 @@ use GreenWix\prismaFrame\controller\ControllerManager;
 use GreenWix\prismaFrame\error\internal\InternalError;
 use GreenWix\prismaFrame\event\EventsHandler;
 use GreenWix\prismaFrame\handler\RequestHandler;
-use GreenWix\prismaFrame\security\Security;
 use GreenWix\prismaFrame\settings\PrismaFrameSettings;
 use GreenWix\prismaFrame\type\TypeManager;
 use GreenWix\prismaFrame\type\TypeValidator;
@@ -21,17 +20,11 @@ class PrismaFrame
 	/** @var bool */
 	private $working = false;
 
-	/** @var PrismaFrameSettings */
-	private $settings;
-
 	/** @var ControllerManager */
 	private $controllerManager;
 
 	/** @var TypeManager */
 	private $typeManager;
-
-	/** @var Security */
-	private $security;
 
 	/** @var EventsHandler */
 	private $eventsHandler;
@@ -39,13 +32,15 @@ class PrismaFrame
 	/** @var RequestHandler */
 	private $requestHandler;
 
-	public function __construct(PrismaFrameSettings $settings, Security $security, EventsHandler $eventsHandler){
+	/** @var PrismaFrameSettings */
+	private $settings;
+
+	public function __construct(PrismaFrameSettings $settings, EventsHandler $eventsHandler){
 		$this->settings = $settings;
 		$this->typeManager = new TypeManager();
 		$this->controllerManager = new ControllerManager($this->typeManager);
 		$this->requestHandler = new RequestHandler($this);
 
-		$this->security = $security;
 		$this->eventsHandler = $eventsHandler;
 
 	}
@@ -67,13 +62,8 @@ class PrismaFrame
 		return $this->eventsHandler;
 	}
 
-	public function getSecurity(): Security{
-		return $this->security;
-	}
-
 	/**
 	 * @param Controller $controller
-	 * @throws \ReflectionException
 	 * @throws error\internal\InternalErrorException
 	 */
 	public function addController(Controller $controller): void{
