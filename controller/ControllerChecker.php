@@ -108,6 +108,8 @@ class ControllerChecker
 			}
 
 			$docParameter->required = !$methodParameter->isOptional();
+			$docParameter->typeName = $methodParameter->getType()->getName(); // увы из PhpDoc полное имя типа мы не вытащим, зато здесь можем
+
 			$resultParameters[$methodParameter->getName()] = $docParameter;
 
 			$this->checkParameterType($controllerName, $methodName, $methodParameter, $docParameter);
@@ -211,7 +213,7 @@ class ControllerChecker
 				throw InternalError::BAD_DOC('Wrong @param');
 			}
 
-			$type = array_shift($param);
+			$typeName = array_shift($param);
 			$parameterName = array_shift($param);
 
 			if($parameterName[0] !== "$"){
@@ -226,7 +228,7 @@ class ControllerChecker
 
 			$parameterName = substr($parameterName, 1); // убираем $
 
-			$result[] = new MethodParameter($this->typeManager, $parameterName, $type, $extraData, false);
+			$result[] = new MethodParameter($this->typeManager, $parameterName, $typeName, $extraData, false);
 		}
 
 		return $result;
