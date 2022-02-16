@@ -13,6 +13,7 @@ use GreenWix\prismaFrame\settings\PrismaFrameSettings;
 use GreenWix\prismaFrame\type\TypeManager;
 use GreenWix\prismaFrame\type\TypeValidator;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 
 class PrismaFrame
 {
@@ -35,14 +36,21 @@ class PrismaFrame
 	/** @var PrismaFrameSettings */
 	private $settings;
 
-	public function __construct(PrismaFrameSettings $settings, EventsHandler $eventsHandler){
+	/** @var LoggerInterface */
+	private $logger;
+
+	public function __construct(PrismaFrameSettings $settings, EventsHandler $eventsHandler, LoggerInterface $logger){
 		$this->settings = $settings;
+		$this->logger = $logger;
 		$this->typeManager = new TypeManager();
 		$this->controllerManager = new ControllerManager($this->typeManager);
 		$this->requestHandler = new RequestHandler($this);
 
 		$this->eventsHandler = $eventsHandler;
+	}
 
+	public function getLogger(): LoggerInterface {
+		return $this->logger;
 	}
 
 	/**
@@ -100,6 +108,10 @@ class PrismaFrame
 
 	public function getControllerManager(): ControllerManager {
 		return $this->controllerManager;
+	}
+
+	public function getTypeManager(): TypeManager {
+		return $this->typeManager;
 	}
 
 }

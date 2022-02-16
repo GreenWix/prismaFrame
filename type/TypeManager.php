@@ -31,10 +31,19 @@ class TypeManager {
 		$this->addTypeValidator(new StringValidator());
 	}
 
+	/**
+	 * @throws TypeManagerException
+	 */
 	public function addTypeValidator(TypeValidator $validator): void{
-		$this->types[$validator->getFullTypeName()] = $validator;
+		$docTypeName = $validator->getDocTypeName();
+		if(isset($this->types[$docTypeName])){
+			throw new TypeManagerException("The type with name \"$docTypeName\" is already busy. Please choose a different name for it");
+		}
+
+		$this->types[$docTypeName] = $validator;
+
 		if($validator->createAlsoArrayType()){
-			$this->addTypeValidator(new TypedArrayTypeValidator($validator->getFullTypeName(), $this));
+			$this->addTypeValidator(new TypedArrayTypeValidator($docTypeName, $this));
 		}
 	}
 

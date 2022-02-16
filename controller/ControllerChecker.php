@@ -23,11 +23,11 @@ use Throwable;
 class ControllerChecker
 {
 
-	/** @var TypeManager */
-	protected $typeManager;
+	/** @var PrismaFrame */
+	protected $prismaFrame;
 
-	public function __construct(TypeManager $typeManager){
-		$this->typeManager = $typeManager;
+	public function __construct(PrismaFrame $prismaFrame){
+		$this->prismaFrame = $prismaFrame;
 	}
 
 	/**
@@ -108,7 +108,6 @@ class ControllerChecker
 			}
 
 			$docParameter->required = !$methodParameter->isOptional();
-			$docParameter->typeName = $methodParameter->getType()->getName(); // увы из PhpDoc полное имя типа мы не вытащим, зато здесь можем
 
 			$resultParameters[$methodParameter->getName()] = $docParameter;
 
@@ -129,7 +128,9 @@ class ControllerChecker
 		$methodParameterTypeName = $methodParameter->getType()->getName();
 		$docParameterTypeName = $docParameter->typeName;
 
-		if(!$this->typeManager->hasTypeValidator($methodParameterTypeName)){
+		$typeManager = $this->prismaFrame->getTypeManager();
+
+		if(!$typeManager->hasTypeValidator($methodParameterTypeName)){
 			throw InternalError::UNKNOWN_PARAMETER_TYPE($controllerName, $methodName, $methodParameterTypeName);
 		}
 	}

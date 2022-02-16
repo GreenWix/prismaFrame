@@ -10,6 +10,7 @@ use GreenWix\prismaFrame\error\internal\InternalError;
 use GreenWix\prismaFrame\error\internal\InternalErrorException;
 use GreenWix\prismaFrame\error\runtime\RuntimeError;
 use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
+use GreenWix\prismaFrame\PrismaFrame;
 use GreenWix\prismaFrame\type\TypeManager;
 
 final class ControllerManager {
@@ -20,8 +21,8 @@ final class ControllerManager {
 	/** @var ControllerChecker */
 	private $checker;
 
-	public function __construct(TypeManager $typeManager){
-		$this->checker = new ControllerChecker($typeManager);
+	public function __construct(PrismaFrame $prismaFrame){
+		$this->checker = new ControllerChecker($prismaFrame);
 	}
 
 	/**
