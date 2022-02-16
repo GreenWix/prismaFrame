@@ -156,7 +156,8 @@ class ControllerChecker
 			!isset($doc['return']) ||
 			$doc['return'][0] !== 'array'
 		){
-			throw InternalError::WRONG_RETURN_TYPE('array', $controllerName, $method->getName());
+			$docReturnType = $doc['return'][0] ?? "<пусто>";
+			throw InternalError::WRONG_RETURN_TYPE('array', $returnType, $docReturnType, $controllerName, $method->getName());
 		}
 	}
 
