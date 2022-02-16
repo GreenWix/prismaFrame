@@ -43,7 +43,7 @@ class PrismaFrame
 		$this->settings = $settings;
 		$this->logger = $logger;
 		$this->typeManager = new TypeManager();
-		$this->controllerManager = new ControllerManager($this->typeManager);
+		$this->controllerManager = new ControllerManager($this);
 		$this->requestHandler = new RequestHandler($this);
 
 		$this->eventsHandler = $eventsHandler;
