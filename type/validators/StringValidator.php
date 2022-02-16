@@ -8,17 +8,18 @@ namespace GreenWix\prismaFrame\type\validators;
 
 use GreenWix\prismaFrame\type\TypeValidator;
 
-class ArrayTypeValidator extends TypeValidator {
+class StringValidator extends TypeValidator {
 
 	public function getFullTypeName(): string {
 		return "string";
 	}
 
 	public function createAlsoArrayType(): bool {
-		return false;
+		return true;
 	}
 
-	public function validateAndGetValue(string $var, array $extraData): array {
-		return explode(',', $var);
+	public function validateAndGetValue(string $input, array $extraData): string{
+		return $input;
 	}
+
 }

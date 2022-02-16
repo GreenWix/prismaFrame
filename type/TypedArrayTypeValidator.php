@@ -30,14 +30,14 @@ class TypedArrayTypeValidator extends TypeValidator{
 	}
 
 	/**
-	 * @param string $var
+	 * @param string $input
 	 * @param array $extraData
 	 * @return array
 	 * @throws TypeManagerException
 	 */
-	public function validateAndGetValue(string $var, array $extraData): array{
+	public function validateAndGetValue(string $input, array $extraData): array{
 		$result = [];
-		$elements = explode(",", $var);
+		$elements = explode(",", $input);
 
 		foreach($elements as $element){
 			$value = $this->typeManager->validateTypedInput($this->typeName, $element, $extraData);

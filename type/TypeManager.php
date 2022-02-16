@@ -8,11 +8,11 @@ namespace GreenWix\prismaFrame\type;
 
 use GreenWix\prismaFrame\error\runtime\RuntimeError;
 use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
-use GreenWix\prismaFrame\type\validators\ArrayTypeValidator;
-use GreenWix\prismaFrame\type\validators\BoolTypeValidator;
-use GreenWix\prismaFrame\type\validators\FloatTypeValidator;
-use GreenWix\prismaFrame\type\validators\IntTypeValidator;
-use GreenWix\prismaFrame\type\validators\StringTypeValidator;
+use GreenWix\prismaFrame\type\validators\ArrayValidator;
+use GreenWix\prismaFrame\type\validators\BoolValidator;
+use GreenWix\prismaFrame\type\validators\FloatValidator;
+use GreenWix\prismaFrame\type\validators\IntValidator;
+use GreenWix\prismaFrame\type\validators\StringValidator;
 
 class TypeManager {
 
@@ -24,11 +24,11 @@ class TypeManager {
 	}
 
 	protected function initBaseSupportedTypes(): void{
-		$this->addTypeValidator(new ArrayTypeValidator());
-		$this->addTypeValidator(new BoolTypeValidator());
-		$this->addTypeValidator(new FloatTypeValidator());
-		$this->addTypeValidator(new IntTypeValidator());
-		$this->addTypeValidator(new StringTypeValidator());
+		$this->addTypeValidator(new ArrayValidator());
+		$this->addTypeValidator(new BoolValidator());
+		$this->addTypeValidator(new FloatValidator());
+		$this->addTypeValidator(new IntValidator());
+		$this->addTypeValidator(new StringValidator());
 	}
 
 	public function addTypeValidator(TypeValidator $validator): void{

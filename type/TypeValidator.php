@@ -29,6 +29,6 @@ abstract class TypeValidator
 
 	abstract public function createAlsoArrayType(): bool;
 
-	abstract public function validateAndGetValue(string $var, array $extraData);
+	abstract public function validateAndGetValue(string $input, array $extraData);
 
 }
