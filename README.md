@@ -16,7 +16,7 @@ prismaFrame - фреймворк для быстрого и удобного с�
 ## Установка
 
 ```shell script
-composer require greenwix/prismaframe:0.2.1
+composer require greenwix/prismaframe:1.0.1
 ```
 
 Вместо 0.2.1 можете использовать интересующую Вас версию из [списка](https://github.com/GreenWix/prismaFrame/releases)
