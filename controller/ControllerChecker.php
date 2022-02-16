@@ -230,7 +230,7 @@ class ControllerChecker
 
 			$parameterName = substr($parameterName, 1); // убираем $
 
-			$result[] = new MethodParameter($this->typeManager, $parameterName, $typeName, $extraData, false);
+			$result[] = new MethodParameter($this->prismaFrame->getTypeManager(), $parameterName, $typeName, $extraData, false);
 		}
 
 		return $result;
