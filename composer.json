@@ -11,12 +11,14 @@
     "require": {
         "ext-json": "*",
         "laminas/laminas-diactoros": "^2.3",
-        "psr/log": "^3.0"
+        "psr/log": "^3.0",
+        "phpunit/phpunit": "^9.5"
     },
     "description": "Framework for creating API",
     "autoload": {
         "psr-4": {
-            "GreenWix\\prismaFrame\\": "/"
+            "GreenWix\\prismaFrame\\": "src/",
+            "GreenWix\\prismaFrame\\tests\\": "tests/"
         }
     }
 }

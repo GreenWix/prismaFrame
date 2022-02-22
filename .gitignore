@@ -1,2 +1,4 @@
 .idea
+/.phpunit.result.cache
 /vendor/
+/libffi.6.dylib

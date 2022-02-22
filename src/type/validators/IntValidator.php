@@ -9,6 +9,7 @@ namespace GreenWix\prismaFrame\type\validators;
 use GreenWix\prismaFrame\error\runtime\RuntimeError;
 use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
 use GreenWix\prismaFrame\type\TypeValidator;
+use GreenWix\prismaFrame\type\validators\exception\BadValidationException;
 
 class IntValidator extends TypeValidator {
 
@@ -19,14 +20,15 @@ class IntValidator extends TypeValidator {
 	public function createAlsoArrayType(): bool {
 		return true;
 	}
+
 	/**
-	 * @throws RuntimeErrorException
+	 * @throws BadValidationException
 	 */
 	public function validateAndGetValue(string $input, array $extraData): int {
 		if(is_numeric($input)){
 			return intval($input);
 		}
 
-		throw RuntimeError::BAD_VALIDATION_RESULT();
+		throw new BadValidationException();
 	}
 }

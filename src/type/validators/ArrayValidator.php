@@ -21,4 +21,5 @@ class ArrayValidator extends TypeValidator {
 	public function validateAndGetValue(string $input, array $extraData): array {
 		return explode(',', $input);
 	}
+
 }

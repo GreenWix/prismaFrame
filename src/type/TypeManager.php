@@ -6,8 +6,6 @@ declare(strict_types=1);
 namespace GreenWix\prismaFrame\type;
 
 
-use GreenWix\prismaFrame\error\runtime\RuntimeError;
-use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
 use GreenWix\prismaFrame\type\validators\ArrayValidator;
 use GreenWix\prismaFrame\type\validators\BoolValidator;
 use GreenWix\prismaFrame\type\validators\FloatValidator;
@@ -19,10 +17,16 @@ class TypeManager {
 	/** @var array */
 	private $types = [];
 
+	/**
+	 * @throws TypeManagerException
+	 */
 	public function __construct(){
 		$this->initBaseSupportedTypes();
 	}
 
+	/**
+	 * @throws TypeManagerException
+	 */
 	protected function initBaseSupportedTypes(): void{
 		$this->addTypeValidator(new ArrayValidator());
 		$this->addTypeValidator(new BoolValidator());
