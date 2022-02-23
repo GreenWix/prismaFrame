@@ -7,6 +7,7 @@ namespace GreenWix\prismaFrame;
 use GreenWix\prismaFrame\controller\Controller;
 use GreenWix\prismaFrame\controller\ControllerManager;
 use GreenWix\prismaFrame\error\internal\InternalError;
+use GreenWix\prismaFrame\error\internal\InternalErrorException;
 use GreenWix\prismaFrame\event\EventsHandler;
 use GreenWix\prismaFrame\handler\RequestHandler;
 use GreenWix\prismaFrame\settings\PrismaFrameSettings;
@@ -60,7 +61,7 @@ class PrismaFrame
 	 */
 	public function handleRequest(ServerRequestInterface $request): Response{
 		if(!$this->isWorking()){
-			throw InternalError::PRISMAFRAME_IS_NOT_STARTED("Обработка запроса не может быть выполнена, пока PrismaFrame не запущен: PrismaFrame->start()");
+			throw new InternalErrorException("Обработка запроса не может быть выполнена, пока PrismaFrame не запущен: PrismaFrame->start()");
 		}
 
 		return $this->requestHandler->handle($request);
@@ -76,7 +77,7 @@ class PrismaFrame
 	 */
 	public function addController(Controller $controller): void{
 		if($this->isWorking()) {
-			throw InternalError::PRISMAFRAME_ALREADY_STARTED("You cant add new controllers while prismaFrame is working");
+			throw new InternalErrorException("You cant add new controllers while prismaFrame is working");
 		}
 
 		$this->controllerManager->addController($controller);

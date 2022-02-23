@@ -4,6 +4,8 @@
 namespace GreenWix\prismaFrame\controller;
 
 
+use GreenWix\prismaFrame\controller\exception\BadInputException;
+use GreenWix\prismaFrame\controller\exception\WrongHttpMethodException;
 use GreenWix\prismaFrame\error\runtime\RuntimeError;
 use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
 use GreenWix\prismaFrame\type\TypeManagerException;
@@ -49,18 +51,19 @@ final class Method
 	 * @param string $httpMethod
 	 * @param array $args
 	 * @return array
-	 * @throws RuntimeErrorException
+	 * @throws BadInputException
 	 * @throws TypeManagerException
+	 * @throws WrongHttpMethodException
 	 */
 	public function invoke(string $httpMethod, array $args): array{
 		if(!isset($this->httpMethods[strtoupper($httpMethod)])){
-			throw RuntimeError::WRONG_HTTP_METHOD($httpMethod, $this->flatHttpMethods);
+			throw new WrongHttpMethodException("This method supports only $this->flatHttpMethods HTTP method(s). Got $httpMethod");
 		}
 
 		$values = [];
 		foreach ($this->parameters as $name => $param){
 			if($param->required && !isset($args[$name])){
-				throw RuntimeError::BAD_INPUT("Parameter \"{$name}\" is required");
+				throw new BadInputException("Parameter \"$name\" is required");
 			}
 
 			if(!isset($args[$name])) {

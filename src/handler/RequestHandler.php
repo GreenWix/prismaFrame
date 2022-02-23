@@ -6,12 +6,14 @@ declare(strict_types=1);
 namespace GreenWix\prismaFrame\handler;
 
 
+use GreenWix\prismaFrame\controller\exception\BadInputException;
 use GreenWix\prismaFrame\error\Error;
 use GreenWix\prismaFrame\error\HTTPCodes;
 use GreenWix\prismaFrame\error\runtime\RuntimeError;
 use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
 use GreenWix\prismaFrame\event\request\AfterRequestEvent;
 use GreenWix\prismaFrame\event\request\BeforeRequestEvent;
+use GreenWix\prismaFrame\handler\exception\VersionException;
 use GreenWix\prismaFrame\PrismaFrame;
 use GreenWix\prismaFrame\Response;
 use Psr\Http\Message\ServerRequestInterface;
@@ -67,12 +69,13 @@ class RequestHandler {
 	 * @param ServerRequestInterface $req
 	 * @param string $httpMethod
 	 * @return array
-	 * @throws RuntimeErrorException
+	 * @throws BadInputException
 	 */
 	private function getRequestArgs(ServerRequestInterface $req, string $httpMethod): array{
 		$parsedBody = $req->getParsedBody();
 		$queryParams = $req->getQueryParams();
 
+		//todo более корректно отрабатывать момент, когда мы льем файл
 		if(empty($parsedBody)) {
 			if($httpMethod === 'GET'){
 				$args = $queryParams;
@@ -84,7 +87,7 @@ class RequestHandler {
 		}
 
 		if(!isset($args)){
-			throw RuntimeError::BAD_INPUT("Bad input");
+			throw new BadInputException("Couldn't get args");
 		}
 
 		return $args;
@@ -92,15 +95,15 @@ class RequestHandler {
 
 	/**
 	 * @param array $queryParams
-	 * @throws RuntimeErrorException
+	 * @throws VersionException
 	 */
 	private function checkVersion(array $queryParams): void{
 		if (!isset($queryParams["v"])) {
-			throw RuntimeError::BAD_INPUT("Parameter \"v\" is required");
+			throw new VersionException("Parameter \"v\" is required");
 		}
 
 		if ($queryParams["v"] !== $this->prismaFrame->getApiVersion()) {
-			throw RuntimeError::WRONG_VERSION();
+			throw new VersionException("This version is incompatible");
 		}
 	}
 

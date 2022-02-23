@@ -6,12 +6,9 @@ declare(strict_types=1);
 namespace GreenWix\prismaFrame\controller;
 
 
-use GreenWix\prismaFrame\error\internal\InternalError;
+use GreenWix\prismaFrame\controller\exception\UnknownControllerException;
 use GreenWix\prismaFrame\error\internal\InternalErrorException;
-use GreenWix\prismaFrame\error\runtime\RuntimeError;
-use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
 use GreenWix\prismaFrame\PrismaFrame;
-use GreenWix\prismaFrame\type\TypeManager;
 
 final class ControllerManager {
 
@@ -21,18 +18,18 @@ final class ControllerManager {
 	/** @var ControllerChecker */
 	private $checker;
 
-	public function __construct(PrismaFrame $prismaFrame){
+	public function __construct(PrismaFrame $prismaFrame) {
 		$this->checker = new ControllerChecker($prismaFrame);
 	}
 
 	/**
 	 * @param string $name
 	 * @return Controller
-	 * @throws RuntimeErrorException
+	 * @throws UnknownControllerException
 	 */
-	public function getController(string $name): Controller{
-		if(!isset($this->controllers[$name])){
-			throw RuntimeError::UNKNOWN_CONTROLLER();
+	public function getController(string $name): Controller {
+		if (!isset($this->controllers[$name])) {
+			throw new UnknownControllerException();
 		}
 
 		return $this->controllers[$name];
@@ -42,10 +39,10 @@ final class ControllerManager {
 	 * @param Controller $controller
 	 * @throws InternalErrorException
 	 */
-	public function addController(Controller $controller){
+	public function addController(Controller $controller) {
 		$controllerName = $controller->getName();
-		if(isset($this->controllers[$controllerName])){
-			throw InternalError::ELEMENT_ALREADY_REGISTERED("Controller", $controllerName);
+		if (isset($this->controllers[$controllerName])) {
+			throw new InternalErrorException("Controller $controllerName is already registered");
 		}
 
 		$controller->methods = $this->checker->getControllerMethods($controller);
