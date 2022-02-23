@@ -4,8 +4,7 @@
 namespace GreenWix\prismaFrame;
 
 
-class Response
-{
+class Response {
 
 	/** @var array */
 	public $response;
@@ -13,7 +12,7 @@ class Response
 	/** @var int */
 	public $httpCode;
 
-	public function __construct(array $response, int $httpCode){
+	public function __construct(array $response, int $httpCode) {
 		$this->response = $response;
 		$this->httpCode = $httpCode;
 	}
