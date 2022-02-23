@@ -5,7 +5,7 @@ namespace GreenWix\prismaFrame\controller;
 
 
 use GreenWix\prismaFrame\error\HTTPCodes;
-use GreenWix\prismaFrame\error\internal\InternalErrorException;
+use GreenWix\prismaFrame\error\InternalErrorException;
 use GreenWix\prismaFrame\PrismaFrame;
 use ReflectionClass;
 use ReflectionMethod;

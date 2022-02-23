@@ -3,7 +3,7 @@
 
 namespace GreenWix\prismaFrame\error;
 
-use GreenWix\prismaFrame\error\runtime\RuntimeErrorCodes;
+use GreenWix\prismaFrame\error\RuntimeErrorCodes;
 use GreenWix\prismaFrame\error\security\SecurityErrorCodes;
 use GreenWix\prismaFrame\PrismaFrame;
 use GreenWix\prismaFrame\Response;

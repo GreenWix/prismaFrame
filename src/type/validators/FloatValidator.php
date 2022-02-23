@@ -6,8 +6,7 @@ declare(strict_types=1);
 namespace GreenWix\prismaFrame\type\validators;
 
 
-use GreenWix\prismaFrame\error\runtime\RuntimeError;
-use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
+use GreenWix\prismaFrame\error\RuntimeError;
 use GreenWix\prismaFrame\type\TypeValidator;
 use GreenWix\prismaFrame\type\validators\exception\BadValidationException;
 

@@ -4,9 +4,7 @@
 namespace GreenWix\prismaFrame\type;
 
 
-use GreenWix\prismaFrame\controller\ControllerChecker;
-use GreenWix\prismaFrame\error\runtime\RuntimeError;
-use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
+use GreenWix\prismaFrame\error\RuntimeError;
 
 class TypedArrayTypeValidator extends TypeValidator{
 

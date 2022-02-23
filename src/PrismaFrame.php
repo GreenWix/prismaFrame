@@ -6,8 +6,7 @@ namespace GreenWix\prismaFrame;
 
 use GreenWix\prismaFrame\controller\Controller;
 use GreenWix\prismaFrame\controller\ControllerManager;
-use GreenWix\prismaFrame\error\internal\InternalError;
-use GreenWix\prismaFrame\error\internal\InternalErrorException;
+use GreenWix\prismaFrame\error\InternalErrorException;
 use GreenWix\prismaFrame\event\EventsHandler;
 use GreenWix\prismaFrame\handler\RequestHandler;
 use GreenWix\prismaFrame\settings\PrismaFrameSettings;
@@ -57,7 +56,7 @@ class PrismaFrame
 	/**
 	 * @param ServerRequestInterface $request
 	 * @return Response
-	 * @throws error\internal\InternalErrorException
+	 * @throws InternalErrorException
 	 */
 	public function handleRequest(ServerRequestInterface $request): Response{
 		if(!$this->isWorking()){
@@ -73,7 +72,7 @@ class PrismaFrame
 
 	/**
 	 * @param Controller $controller
-	 * @throws error\internal\InternalErrorException
+	 * @throws GreenWix\prismaFrame\error\InternalErrorException
 	 */
 	public function addController(Controller $controller): void{
 		if($this->isWorking()) {

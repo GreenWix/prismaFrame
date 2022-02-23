@@ -7,7 +7,7 @@ namespace GreenWix\prismaFrame\controller;
 
 
 use GreenWix\prismaFrame\controller\exception\UnknownControllerException;
-use GreenWix\prismaFrame\error\internal\InternalErrorException;
+use GreenWix\prismaFrame\error\InternalErrorException;
 use GreenWix\prismaFrame\PrismaFrame;
 
 final class ControllerManager {

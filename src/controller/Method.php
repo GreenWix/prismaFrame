@@ -6,8 +6,7 @@ namespace GreenWix\prismaFrame\controller;
 
 use GreenWix\prismaFrame\controller\exception\BadInputException;
 use GreenWix\prismaFrame\controller\exception\WrongHttpMethodException;
-use GreenWix\prismaFrame\error\runtime\RuntimeError;
-use GreenWix\prismaFrame\error\runtime\RuntimeErrorException;
+use GreenWix\prismaFrame\error\RuntimeError;
 use GreenWix\prismaFrame\type\TypeManagerException;
 
 final class Method
