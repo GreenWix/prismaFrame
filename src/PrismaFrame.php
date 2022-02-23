@@ -15,8 +15,7 @@ use GreenWix\prismaFrame\type\TypeValidator;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
-class PrismaFrame
-{
+class PrismaFrame {
 
 	/** @var bool */
 	private $working = false;
@@ -39,7 +38,7 @@ class PrismaFrame
 	/** @var LoggerInterface */
 	private $logger;
 
-	public function __construct(PrismaFrameSettings $settings, EventsHandler $eventsHandler, LoggerInterface $logger){
+	public function __construct(PrismaFrameSettings $settings, EventsHandler $eventsHandler, LoggerInterface $logger) {
 		$this->settings = $settings;
 		$this->logger = $logger;
 		$this->typeManager = new TypeManager();
@@ -58,15 +57,15 @@ class PrismaFrame
 	 * @return Response
 	 * @throws InternalErrorException
 	 */
-	public function handleRequest(ServerRequestInterface $request): Response{
-		if(!$this->isWorking()){
+	public function handleRequest(ServerRequestInterface $request): Response {
+		if (!$this->isWorking()) {
 			throw new InternalErrorException("Обработка запроса не может быть выполнена, пока PrismaFrame не запущен: PrismaFrame->start()");
 		}
 
 		return $this->requestHandler->handle($request);
 	}
 
-	public function getEventsHandler(): EventsHandler{
+	public function getEventsHandler(): EventsHandler {
 		return $this->eventsHandler;
 	}
 
@@ -74,35 +73,35 @@ class PrismaFrame
 	 * @param Controller $controller
 	 * @throws GreenWix\prismaFrame\error\InternalErrorException
 	 */
-	public function addController(Controller $controller): void{
-		if($this->isWorking()) {
+	public function addController(Controller $controller): void {
+		if ($this->isWorking()) {
 			throw new InternalErrorException("You cant add new controllers while prismaFrame is working");
 		}
 
 		$this->controllerManager->addController($controller);
 	}
 
-	public function addTypeValidator(TypeValidator $validator): void{
+	public function addTypeValidator(TypeValidator $validator): void {
 		$this->typeManager->addTypeValidator($validator);
 	}
 
-	public function isDebug(): bool{
+	public function isDebug(): bool {
 		return $this->settings->debug;
 	}
 
-	public function getApiVersion(): string{
+	public function getApiVersion(): string {
 		return $this->settings->apiVersion;
 	}
 
-	public function getSettings(): PrismaFrameSettings{
+	public function getSettings(): PrismaFrameSettings {
 		return $this->settings;
 	}
 
-	public function start(){
+	public function start() {
 		$this->working = true;
 	}
 
-	public function isWorking(): bool{
+	public function isWorking(): bool {
 		return $this->working;
 	}
 

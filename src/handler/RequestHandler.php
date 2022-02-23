@@ -23,7 +23,7 @@ class RequestHandler {
 	/** @var PrismaFrame */
 	protected $prismaFrame;
 
-	public function __construct(PrismaFrame $prismaFrame){
+	public function __construct(PrismaFrame $prismaFrame) {
 		$this->prismaFrame = $prismaFrame;
 	}
 
@@ -31,7 +31,7 @@ class RequestHandler {
 	 * @param ServerRequestInterface $request
 	 * @return Response
 	 */
-	public function handle(ServerRequestInterface $request): Response{
+	public function handle(ServerRequestInterface $request): Response {
 		$prismaFrame = $this->prismaFrame;
 
 		$eventsHandler = $prismaFrame->getEventsHandler();
@@ -54,10 +54,10 @@ class RequestHandler {
 			$controller = $controllerManager->getController($controller);
 
 			return new Response($controller->callMethod($method, $httpMethod, $args), HTTPCodes::OK);
-		}catch(Throwable $e){
+		} catch (Throwable $e) {
 			return Error::make($prismaFrame, $e);
-		}finally{
-			if(isset($controller, $method, $args, $response)) {
+		} finally {
+			if (isset($controller, $method, $args, $response)) {
 				$event = new AfterRequestEvent($request, $controller, $method, $args, $response);
 				$eventsHandler->afterRequest($event);
 			}
@@ -70,22 +70,22 @@ class RequestHandler {
 	 * @return array
 	 * @throws BadInputException
 	 */
-	private function getRequestArgs(ServerRequestInterface $req, string $httpMethod): array{
+	private function getRequestArgs(ServerRequestInterface $req, string $httpMethod): array {
 		$parsedBody = $req->getParsedBody();
 		$queryParams = $req->getQueryParams();
 
 		//todo более корректно отрабатывать момент, когда мы льем файл
-		if(empty($parsedBody)) {
-			if($httpMethod === 'GET'){
+		if (empty($parsedBody)) {
+			if ($httpMethod === 'GET') {
 				$args = $queryParams;
-			}else{
+			} else {
 				$args = json_decode($req->getBody()->getContents(), true, JSON_THROW_ON_ERROR);
 			}
-		}else{
+		} else {
 			$args = $parsedBody;
 		}
 
-		if(!isset($args)){
+		if (!isset($args)) {
 			throw new BadInputException("Couldn't get args");
 		}
 
@@ -96,7 +96,7 @@ class RequestHandler {
 	 * @param array $queryParams
 	 * @throws VersionException
 	 */
-	private function checkVersion(array $queryParams): void{
+	private function checkVersion(array $queryParams): void {
 		if (!isset($queryParams["v"])) {
 			throw new VersionException("Parameter \"v\" is required");
 		}
@@ -106,7 +106,7 @@ class RequestHandler {
 		}
 	}
 
-	private function getControllerNameAndMethod(string $url): array{
+	private function getControllerNameAndMethod(string $url): array {
 		$hostAndControllerAndMethod = explode("/", $url, 2);
 
 		$controllerAndMethod = $hostAndControllerAndMethod[1];

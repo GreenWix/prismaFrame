@@ -6,24 +6,24 @@ namespace GreenWix\prismaFrame\type;
 
 use GreenWix\prismaFrame\error\RuntimeError;
 
-class TypedArrayTypeValidator extends TypeValidator{
+class TypedArrayTypeValidator extends TypeValidator {
 
-	/** @var string  */
+	/** @var string */
 	private $typeName;
 
 	/** @var TypeManager */
 	private $typeManager;
 
-	public function __construct(string $typeName, TypeManager $manager){
+	public function __construct(string $typeName, TypeManager $manager) {
 		$this->typeName = $typeName;
 		$this->typeManager = $manager;
 	}
 
-	public function getFullTypeName(): string{
+	public function getFullTypeName(): string {
 		return $this->typeName . '[]';
 	}
 
-	public function createAlsoArrayType(): bool{
+	public function createAlsoArrayType(): bool {
 		return false;
 	}
 
@@ -33,11 +33,11 @@ class TypedArrayTypeValidator extends TypeValidator{
 	 * @return array
 	 * @throws TypeManagerException
 	 */
-	public function validateAndGetValue(string $input, array $extraData): array{
+	public function validateAndGetValue(string $input, array $extraData): array {
 		$result = [];
 		$elements = explode(",", $input);
 
-		foreach($elements as $element){
+		foreach ($elements as $element) {
 			$value = $this->typeManager->validateTypedInput($this->typeName, $element, $extraData);
 
 			$result[] = $value;

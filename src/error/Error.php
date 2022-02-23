@@ -9,16 +9,16 @@ use GreenWix\prismaFrame\PrismaFrame;
 use GreenWix\prismaFrame\Response;
 use Throwable;
 
-final class Error
-{
+final class Error {
 
-	private function __construct(){}
+	private function __construct() {
+	}
 
-	public static function make(PrismaFrame $prismaFrame, Throwable $e): Response{
-		if($e instanceof PrismaException) {
+	public static function make(PrismaFrame $prismaFrame, Throwable $e): Response {
+		if ($e instanceof PrismaException) {
 			$id = $e->id;
 			$httpCode = $e->httpCode;
-		}else{
+		} else {
 			$id = SecurityErrorCodes::INTERNAL_EXCEPTION;
 			$httpCode = HTTPCodes::INTERNAL_SERVER_ERROR;
 		}

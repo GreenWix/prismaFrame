@@ -4,8 +4,7 @@
 namespace GreenWix\prismaFrame\type;
 
 
-abstract class TypeValidator
-{
+abstract class TypeValidator {
 
 	/**
 	 * Возвращает полный неймспейс класса, который формирует данный валидатор
@@ -17,7 +16,7 @@ abstract class TypeValidator
 	 * Возвращает имя класса без неймспейса.
 	 * @return string
 	 */
-	public function getDocTypeName(): string{
+	public function getDocTypeName(): string {
 		$name = $this->getFullTypeName(); // \namespace\a\b\c\SomeClass
 
 		$parts = explode("\\", $name);  // [namespace, a, b, c, SomeClass]

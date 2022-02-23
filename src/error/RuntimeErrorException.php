@@ -4,7 +4,6 @@
 namespace GreenWix\prismaFrame\error;
 
 
-class RuntimeErrorException extends PrismaException
-{
+class RuntimeErrorException extends PrismaException {
 
 }

@@ -24,7 +24,7 @@ class IntValidator extends TypeValidator {
 	 * @throws BadValidationException
 	 */
 	public function validateAndGetValue(string $input, array $extraData): int {
-		if(is_numeric($input)){
+		if (is_numeric($input)) {
 			return intval($input);
 		}
 

@@ -20,14 +20,14 @@ class TypeManager {
 	/**
 	 * @throws TypeManagerException
 	 */
-	public function __construct(){
+	public function __construct() {
 		$this->initBaseSupportedTypes();
 	}
 
 	/**
 	 * @throws TypeManagerException
 	 */
-	protected function initBaseSupportedTypes(): void{
+	protected function initBaseSupportedTypes(): void {
 		$this->addTypeValidator(new ArrayValidator());
 		$this->addTypeValidator(new BoolValidator());
 		$this->addTypeValidator(new FloatValidator());
@@ -38,15 +38,15 @@ class TypeManager {
 	/**
 	 * @throws TypeManagerException
 	 */
-	public function addTypeValidator(TypeValidator $validator): void{
+	public function addTypeValidator(TypeValidator $validator): void {
 		$docTypeName = $validator->getDocTypeName();
-		if(isset($this->types[$docTypeName])){
+		if (isset($this->types[$docTypeName])) {
 			throw new TypeManagerException("The type with name \"$docTypeName\" is already busy. Please choose a different name for " . get_class($validator));
 		}
 
 		$this->types[$docTypeName] = $validator;
 
-		if($validator->createAlsoArrayType()){
+		if ($validator->createAlsoArrayType()) {
 			$this->addTypeValidator(new TypedArrayTypeValidator($docTypeName, $this));
 		}
 	}
@@ -58,7 +58,7 @@ class TypeManager {
 	 * @return mixed
 	 * @throws TypeManagerException
 	 */
-	public function validateTypedInput(string $typeName, string $input, array $extraData = []){
+	public function validateTypedInput(string $typeName, string $input, array $extraData = []) {
 		$this->checkTypeValidatorExistence($typeName);
 
 		$type = $this->types[$typeName];
@@ -66,7 +66,7 @@ class TypeManager {
 		return $type->validateAndGetValue($input, $extraData);
 	}
 
-	public function hasTypeValidator(string $typeName): bool{
+	public function hasTypeValidator(string $typeName): bool {
 		return isset($this->types[$typeName]);
 	}
 
@@ -75,7 +75,7 @@ class TypeManager {
 	 * @return TypeValidator
 	 * @throws TypeManagerException
 	 */
-	public function getTypeValidator(string $typeName): TypeValidator{
+	public function getTypeValidator(string $typeName): TypeValidator {
 		$this->checkTypeValidatorExistence($typeName);
 
 		return $this->types[$typeName];
@@ -85,8 +85,8 @@ class TypeManager {
 	 * @param string $typeName
 	 * @throws TypeManagerException
 	 */
-	public function checkTypeValidatorExistence(string $typeName): void{
-		if(!$this->hasTypeValidator($typeName)){
+	public function checkTypeValidatorExistence(string $typeName): void {
+		if (!$this->hasTypeValidator($typeName)) {
 			throw new TypeManagerException("No validator for type " . $typeName);
 		}
 	}

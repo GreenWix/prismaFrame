@@ -6,8 +6,7 @@ namespace GreenWix\prismaFrame\controller;
 use GreenWix\prismaFrame\type\TypeManager;
 use GreenWix\prismaFrame\type\TypeManagerException;
 
-class MethodParameter
-{
+class MethodParameter {
 
 	/** @var bool */
 	public $required = false;
@@ -24,7 +23,7 @@ class MethodParameter
 	/** @var TypeManager */
 	private $typeManager;
 
-	public function __construct(TypeManager $typeManager, string $name, string $typeName, array $extraData, bool $required){
+	public function __construct(TypeManager $typeManager, string $name, string $typeName, array $extraData, bool $required) {
 		$this->name = $name;
 		$this->typeName = $typeName;
 		$this->extraData = $extraData;
@@ -38,7 +37,7 @@ class MethodParameter
 	 * @return mixed
 	 * @throws TypeManagerException
 	 */
-	public function validateAndGetValue(string $input){
+	public function validateAndGetValue(string $input) {
 		$typeManager = $this->typeManager;
 
 		return $typeManager->validateTypedInput($this->typeName, $input, $this->extraData);

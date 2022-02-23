@@ -147,20 +147,20 @@ class ControllerChecker {
 
 		$requiredReturnType = 'array';
 
-		if($returnType === null){
+		if ($returnType === null) {
 			throw new InternalErrorException("Метод не возвращает ничего, хотя должен $requiredReturnType");
 		}
 
-		if($returnType->getName() !== $requiredReturnType){
+		if ($returnType->getName() !== $requiredReturnType) {
 			throw new InternalErrorException("Метод возвращает иной тип, хотя должен $requiredReturnType");
 		}
 
-		if(!isset($doc['return'])){
+		if (!isset($doc['return'])) {
 			throw new InternalErrorException("В PhpDoc метода не прописан @return");
 		}
 
 		$docReturnType = $doc['return'][0];
-		if($docReturnType !== $requiredReturnType) {
+		if ($docReturnType !== $requiredReturnType) {
 			throw new InternalErrorException("В PhpDoc метода @return указывает на иной тип, хотя должен $requiredReturnType");
 		}
 	}

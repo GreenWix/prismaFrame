@@ -9,8 +9,7 @@ use GreenWix\prismaFrame\controller\exception\WrongHttpMethodException;
 use GreenWix\prismaFrame\error\RuntimeError;
 use GreenWix\prismaFrame\type\TypeManagerException;
 
-final class Method
-{
+final class Method {
 
 	/** @var string */
 	public $name;
@@ -36,10 +35,10 @@ final class Method
 	 * @param array $httpMethods
 	 * @param Controller $controller
 	 */
-	public function __construct(string $name, array $parameters, array $httpMethods, Controller $controller){
+	public function __construct(string $name, array $parameters, array $httpMethods, Controller $controller) {
 		$this->name = $name;
 		$this->parameters = $parameters;
-		foreach ($httpMethods as $method){
+		foreach ($httpMethods as $method) {
 			$this->httpMethods[$method] = true; // чтобы можно было потом ускоренно проверять через isset
 		}
 		$this->flatHttpMethods = implode("|", $httpMethods);
@@ -54,18 +53,18 @@ final class Method
 	 * @throws TypeManagerException
 	 * @throws WrongHttpMethodException
 	 */
-	public function invoke(string $httpMethod, array $args): array{
-		if(!isset($this->httpMethods[strtoupper($httpMethod)])){
+	public function invoke(string $httpMethod, array $args): array {
+		if (!isset($this->httpMethods[strtoupper($httpMethod)])) {
 			throw new WrongHttpMethodException("This method supports only $this->flatHttpMethods HTTP method(s). Got $httpMethod");
 		}
 
 		$values = [];
-		foreach ($this->parameters as $name => $param){
-			if($param->required && !isset($args[$name])){
+		foreach ($this->parameters as $name => $param) {
+			if ($param->required && !isset($args[$name])) {
 				throw new BadInputException("Parameter \"$name\" is required");
 			}
 
-			if(!isset($args[$name])) {
+			if (!isset($args[$name])) {
 				continue;
 			}
 

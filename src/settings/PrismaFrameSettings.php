@@ -4,9 +4,8 @@
 namespace GreenWix\prismaFrame\settings;
 
 
-final class PrismaFrameSettings
-{
-	public function __construct(bool $debug, string $apiVersion){
+final class PrismaFrameSettings {
+	public function __construct(bool $debug, string $apiVersion) {
 		$this->debug = $debug;
 		$this->apiVersion = $apiVersion;
 	}

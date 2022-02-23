@@ -4,8 +4,7 @@
 namespace GreenWix\prismaFrame\error;
 
 
-interface HTTPCodes
-{
+interface HTTPCodes {
 
 	//region Информационные
 	const CONTINUE = 100;

@@ -10,5 +10,4 @@ use GreenWix\prismaFrame\error\RuntimeErrorException;
 class ControllerException extends RuntimeErrorException {
 
 
-
 }
