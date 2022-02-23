@@ -12,7 +12,7 @@ use GreenWix\prismaFrame\error\HTTPCodes;
 
 class UnknownMethodException extends ControllerException {
 
-	public function __construct(string $message = "Unknown method", Exception $previous = null) {
+	public function __construct(string $message, Exception $previous = null) {
 		parent::__construct(ErrorCodes::UNKNOWN_METHOD, $message, HTTPCodes::NOT_FOUND, $previous);
 	}
 

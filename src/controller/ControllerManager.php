@@ -29,7 +29,7 @@ final class ControllerManager {
 	 */
 	public function getController(string $name): Controller {
 		if (!isset($this->controllers[$name])) {
-			throw new UnknownControllerException();
+			throw new UnknownControllerException("Unknown controller");
 		}
 
 		return $this->controllers[$name];

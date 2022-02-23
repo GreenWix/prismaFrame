@@ -40,7 +40,7 @@ class ControllerChecker {
 			try {
 				$resultMethods[$methodName] = $this->checkAndGetMethod($method, $controller);
 			} catch (Throwable $e) {
-				throw new InternalErrorException("При обработке метода $controllerAndMethodName произошла ошибка", HTTPCodes::INTERNAL_SERVER_ERROR, $e);
+				throw new InternalErrorException("An error occurred while processing $controllerAndMethodName method", HTTPCodes::INTERNAL_SERVER_ERROR, $e);
 			}
 		}
 		return $resultMethods;
@@ -55,11 +55,10 @@ class ControllerChecker {
 	 */
 	protected function checkAndGetMethod(ReflectionMethod $method, Controller $controller): Method {
 		$methodName = $method->getName();
-		$controllerName = $controller->getName();
 
 		$comment = $method->getDocComment();
 		if ($comment === false) {
-			throw new InternalErrorException("Метод не содержит php-doc");
+			throw new InternalErrorException("No PHPDoc");
 		}
 
 		$doc = self::parseDoc($comment);
@@ -67,13 +66,13 @@ class ControllerChecker {
 		$this->checkReturnType($method, $doc);
 
 		if (!isset($doc['httpMethod'])) {
-			throw new InternalErrorException('Php-doc метода должен содержать @httpMethod <GET|POST|PATCH|PUT или несколько методов перечисленных через "|">');
+			throw new InternalErrorException('PHPDoc must contain @httpMethod <GET|POST|PATCH|PUT or some http methods divided by "|">');
 		}
 
 		$httpMethods = $this->getHttpMethods($doc);
 		foreach ($httpMethods as $httpMethod) {
 			if (!$this->isHttpMethodAllowed($httpMethod)) {
-				throw new InternalErrorException("HTTP метод \"$httpMethod\" не поддерживается");
+				throw new InternalErrorException("HTTP method $httpMethod is not supported");
 			}
 		}
 
@@ -96,13 +95,13 @@ class ControllerChecker {
 		$i = 0;
 		foreach ($method->getParameters() as $methodParameter) {
 			if (!isset($docParameters[$i])) {
-				throw new InternalErrorException("Php-doc содержит упоминание не всех аргументов функции");
+				throw new InternalErrorException("PHPDoc does not contain all method arguments");
 			}
 
 			$docParameter = $docParameters[$i];
 			$parameterName = $methodParameter->getName();
 			if ($docParameter->name !== $parameterName) {
-				throw new InternalErrorException("Порядок аргументов в php-doc не совпадает с порядком аргументов функции");
+				throw new InternalErrorException("The order of the arguments in PHPDoc not match the order of the method arguments");
 			}
 
 			$docParameter->required = !$methodParameter->isOptional();
@@ -126,7 +125,7 @@ class ControllerChecker {
 		$typeManager = $this->prismaFrame->getTypeManager();
 
 		if (!$typeManager->hasTypeValidator($parameterTypeName)) {
-			throw new InternalErrorException("Тип $parameterTypeName (аргумент $parameterName) не является поддерживаемым");
+			throw new InternalErrorException("Type $parameterTypeName of $parameterName argument is not supported");
 		}
 	}
 
@@ -148,20 +147,21 @@ class ControllerChecker {
 		$requiredReturnType = 'array';
 
 		if ($returnType === null) {
-			throw new InternalErrorException("Метод не возвращает ничего, хотя должен $requiredReturnType");
+			throw new InternalErrorException("Method returns void instead of $requiredReturnType");
 		}
 
-		if ($returnType->getName() !== $requiredReturnType) {
-			throw new InternalErrorException("Метод возвращает иной тип, хотя должен $requiredReturnType");
+		$actualReturnTypeName = $returnType->getName();
+		if ($actualReturnTypeName !== $requiredReturnType) {
+			throw new InternalErrorException("Method returns $actualReturnTypeName instead of $requiredReturnType");
 		}
 
 		if (!isset($doc['return'])) {
-			throw new InternalErrorException("В PhpDoc метода не прописан @return");
+			throw new InternalErrorException("There is no @return in PHPDoc");
 		}
 
 		$docReturnType = $doc['return'][0];
 		if ($docReturnType !== $requiredReturnType) {
-			throw new InternalErrorException("В PhpDoc метода @return указывает на иной тип, хотя должен $requiredReturnType");
+			throw new InternalErrorException("The @return in PHPDoc refers to $docReturnType instead of $requiredReturnType");
 		}
 	}
 
@@ -227,7 +227,7 @@ class ControllerChecker {
 			}
 
 			if (isset($result[$parameterName])) {
-				throw new InternalErrorException("Duplicate @param \"{$parameterName}\" line");
+				throw new InternalErrorException("Duplicate @param $parameterName");
 			}
 
 			$extraData = $param;

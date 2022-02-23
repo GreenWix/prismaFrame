@@ -59,7 +59,7 @@ class PrismaFrame {
 	 */
 	public function handleRequest(ServerRequestInterface $request): Response {
 		if (!$this->isWorking()) {
-			throw new InternalErrorException("Обработка запроса не может быть выполнена, пока PrismaFrame не запущен: PrismaFrame->start()");
+			throw new InternalErrorException("Start prismaFrame before handling requests");
 		}
 
 		return $this->requestHandler->handle($request);
@@ -75,12 +75,15 @@ class PrismaFrame {
 	 */
 	public function addController(Controller $controller): void {
 		if ($this->isWorking()) {
-			throw new InternalErrorException("You cant add new controllers while prismaFrame is working");
+			throw new InternalErrorException("You can't add new controllers while prismaFrame is working");
 		}
 
 		$this->controllerManager->addController($controller);
 	}
 
+	/**
+	 * @throws type\TypeManagerException
+	 */
 	public function addTypeValidator(TypeValidator $validator): void {
 		$this->typeManager->addTypeValidator($validator);
 	}
