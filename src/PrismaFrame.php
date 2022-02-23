@@ -71,7 +71,7 @@ class PrismaFrame {
 
 	/**
 	 * @param Controller $controller
-	 * @throws GreenWix\prismaFrame\error\InternalErrorException
+	 * @throws InternalErrorException
 	 */
 	public function addController(Controller $controller): void {
 		if ($this->isWorking()) {

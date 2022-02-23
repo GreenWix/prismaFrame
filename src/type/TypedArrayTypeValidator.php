@@ -4,8 +4,6 @@
 namespace GreenWix\prismaFrame\type;
 
 
-use GreenWix\prismaFrame\error\RuntimeError;
-
 class TypedArrayTypeValidator extends TypeValidator {
 
 	/** @var string */

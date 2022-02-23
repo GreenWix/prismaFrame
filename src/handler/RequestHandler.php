@@ -9,7 +9,6 @@ namespace GreenWix\prismaFrame\handler;
 use GreenWix\prismaFrame\controller\exception\BadInputException;
 use GreenWix\prismaFrame\error\Error;
 use GreenWix\prismaFrame\error\HTTPCodes;
-use GreenWix\prismaFrame\error\RuntimeError;
 use GreenWix\prismaFrame\event\request\AfterRequestEvent;
 use GreenWix\prismaFrame\event\request\BeforeRequestEvent;
 use GreenWix\prismaFrame\handler\exception\VersionException;
@@ -55,7 +54,7 @@ class RequestHandler {
 
 			return new Response($controller->callMethod($method, $httpMethod, $args), HTTPCodes::OK);
 		} catch (Throwable $e) {
-			return Error::make($prismaFrame, $e);
+			return Error::make($prismaFrame->isDebug(), $e);
 		} finally {
 			if (isset($controller, $method, $args, $response)) {
 				$event = new AfterRequestEvent($request, $controller, $method, $args, $response);

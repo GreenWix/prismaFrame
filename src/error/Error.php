@@ -3,30 +3,18 @@
 
 namespace GreenWix\prismaFrame\error;
 
-use GreenWix\prismaFrame\error\RuntimeErrorCodes;
-use GreenWix\prismaFrame\error\security\SecurityErrorCodes;
-use GreenWix\prismaFrame\PrismaFrame;
 use GreenWix\prismaFrame\Response;
 use Throwable;
 
 final class Error {
 
-	private function __construct() {
-	}
-
-	public static function make(PrismaFrame $prismaFrame, Throwable $e): Response {
-		if ($e instanceof PrismaException) {
-			$id = $e->id;
-			$httpCode = $e->httpCode;
-		} else {
-			$id = SecurityErrorCodes::INTERNAL_EXCEPTION;
-			$httpCode = HTTPCodes::INTERNAL_SERVER_ERROR;
-		}
+	public static function make(bool $isDebug, Throwable $e): Response {
+		[$id, $httpCode] = self::getIdAndHttpCode($e);
 		$message = $e->getMessage();
 
-		if (!$prismaFrame->isDebug() && $httpCode === HTTPCodes::INTERNAL_SERVER_ERROR) {
+		if (!$isDebug && $httpCode === HTTPCodes::INTERNAL_SERVER_ERROR) {
 			$message = "Internal server error";
-			$id = RuntimeErrorCodes::SECURITY;
+			$id = ErrorCodes::INTERNAL_ERROR;
 		}
 
 		return new Response([
@@ -35,6 +23,21 @@ final class Error {
 				"message" => $message,
 			]
 		], $httpCode);
+	}
+
+	protected static function getIdAndHttpCode(Throwable $e): array {
+		if ($e instanceof PrismaException) {
+			$id = $e->id;
+			$httpCode = $e->httpCode;
+		} else {
+			$id = ErrorCodes::INTERNAL_ERROR;
+			$httpCode = HTTPCodes::INTERNAL_SERVER_ERROR;
+		}
+
+		return [$id, $httpCode];
+	}
+
+	private function __construct() {
 	}
 
 }
