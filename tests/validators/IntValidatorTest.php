@@ -7,7 +7,7 @@ namespace GreenWix\prismaFrame\tests\validators;
 
 
 use GreenWix\prismaFrame\error\RuntimeErrorException;
-use GreenWix\prismaFrame\type\validators\exception\exception\IntValidator;
+use GreenWix\prismaFrame\type\validators\IntValidator;
 use PHPUnit\Framework\TestCase;
 
 class IntValidatorTest extends TestCase {

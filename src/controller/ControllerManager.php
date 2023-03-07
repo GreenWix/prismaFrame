@@ -1,10 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare(strict_types = 1);
 
 namespace GreenWix\prismaFrame\controller;
-
 
 use GreenWix\prismaFrame\controller\exception\UnknownControllerException;
 use GreenWix\prismaFrame\error\InternalErrorException;
@@ -12,42 +10,38 @@ use GreenWix\prismaFrame\PrismaFrame;
 
 final class ControllerManager {
 
-	/** @var Controller[] */
-	private $controllers = [];
+  /** @var Controller[] */
+  private array $controllers = [];
 
-	/** @var ControllerChecker */
-	private $checker;
+  private ControllerChecker $checker;
 
-	public function __construct(PrismaFrame $prismaFrame) {
-		$this->checker = new ControllerChecker($prismaFrame);
-	}
+  public function __construct(PrismaFrame $prismaFrame) {
+    $this->checker = new ControllerChecker($prismaFrame);
+  }
 
-	/**
-	 * @param string $name
-	 * @return Controller
-	 * @throws UnknownControllerException
-	 */
-	public function getController(string $name): Controller {
-		if (!isset($this->controllers[$name])) {
-			throw new UnknownControllerException("Unknown controller");
-		}
+  /**
+   * @throws UnknownControllerException
+   */
+  public function getController(string $name): Controller {
+    if (!isset($this->controllers[$name])) {
+      throw new UnknownControllerException("Unknown controller");
+    }
 
-		return $this->controllers[$name];
-	}
+    return $this->controllers[$name];
+  }
 
-	/**
-	 * @param Controller $controller
-	 * @throws InternalErrorException
-	 */
-	public function addController(Controller $controller) {
-		$controllerName = $controller->getName();
-		if (isset($this->controllers[$controllerName])) {
-			throw new InternalErrorException("Controller $controllerName is already registered");
-		}
+  /**
+   * @throws InternalErrorException
+   */
+  public function addController(Controller $controller): void {
+    $controllerName = $controller->getName();
+    if (isset($this->controllers[$controllerName])) {
+      throw new InternalErrorException("Controller $controllerName is already registered");
+    }
 
-		$controller->methods = $this->checker->getControllerMethods($controller);
+    $controller->methods = $this->checker->getControllerMethods($controller);
 
-		$this->controllers[$controllerName] = $controller;
-	}
+    $this->controllers[$controllerName] = $controller;
+  }
 
 }

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace GreenWix\prismaFrame;
-
 
 use GreenWix\prismaFrame\controller\Controller;
 use GreenWix\prismaFrame\controller\ControllerManager;
@@ -17,103 +15,90 @@ use Psr\Log\LoggerInterface;
 
 class PrismaFrame {
 
-	/** @var bool */
-	private $working = false;
+  private bool $working = false;
+  private ControllerManager $controllerManager;
+  private TypeManager $typeManager;
+  private EventsHandler $eventsHandler;
+  private RequestHandler $requestHandler;
+  private PrismaFrameSettings $settings;
+  private LoggerInterface $logger;
 
-	/** @var ControllerManager */
-	private $controllerManager;
+  public function __construct(PrismaFrameSettings $settings, EventsHandler $eventsHandler, LoggerInterface $logger) {
+    $this->settings = $settings;
+    $this->logger = $logger;
+    $this->typeManager = new TypeManager();
+    $this->controllerManager = new ControllerManager($this);
+    $this->requestHandler = new RequestHandler($this);
 
-	/** @var TypeManager */
-	private $typeManager;
+    $this->eventsHandler = $eventsHandler;
+  }
 
-	/** @var EventsHandler */
-	private $eventsHandler;
+  public function getLogger(): LoggerInterface {
+    return $this->logger;
+  }
 
-	/** @var RequestHandler */
-	private $requestHandler;
+  /**
+   * @throws InternalErrorException
+   */
+  public function handleRequest(ServerRequestInterface $request): Response {
+    if (!$this->isWorking()) {
+      throw new InternalErrorException("Start prismaFrame before handling requests");
+    }
 
-	/** @var PrismaFrameSettings */
-	private $settings;
+    return $this->requestHandler->handle($request);
+  }
 
-	/** @var LoggerInterface */
-	private $logger;
+  public function getEventsHandler(): EventsHandler {
+    return $this->eventsHandler;
+  }
 
-	public function __construct(PrismaFrameSettings $settings, EventsHandler $eventsHandler, LoggerInterface $logger) {
-		$this->settings = $settings;
-		$this->logger = $logger;
-		$this->typeManager = new TypeManager();
-		$this->controllerManager = new ControllerManager($this);
-		$this->requestHandler = new RequestHandler($this);
+  /**
+   * @throws InternalErrorException
+   */
+  public function addController(Controller $controller): void {
+    if ($this->isWorking()) {
+      throw new InternalErrorException("You can't add new controllers while prismaFrame is working");
+    }
 
-		$this->eventsHandler = $eventsHandler;
-	}
+    $this->controllerManager->addController($controller);
+  }
 
-	public function getLogger(): LoggerInterface {
-		return $this->logger;
-	}
+  /**
+   * @throws type\TypeManagerException
+   */
+  public function addTypeValidator(TypeValidator $validator): void {
+    $this->typeManager->addTypeValidator($validator);
+  }
 
-	/**
-	 * @param ServerRequestInterface $request
-	 * @return Response
-	 * @throws InternalErrorException
-	 */
-	public function handleRequest(ServerRequestInterface $request): Response {
-		if (!$this->isWorking()) {
-			throw new InternalErrorException("Start prismaFrame before handling requests");
-		}
+  public function isDebug(): bool {
+    return $this->settings->debug;
+  }
 
-		return $this->requestHandler->handle($request);
-	}
+  /**
+   * @return string[]
+   */
+  public function getSupportedApiVersions(): array {
+    return $this->settings->supportedApiVersions;
+  }
 
-	public function getEventsHandler(): EventsHandler {
-		return $this->eventsHandler;
-	}
+  public function getSettings(): PrismaFrameSettings {
+    return $this->settings;
+  }
 
-	/**
-	 * @param Controller $controller
-	 * @throws InternalErrorException
-	 */
-	public function addController(Controller $controller): void {
-		if ($this->isWorking()) {
-			throw new InternalErrorException("You can't add new controllers while prismaFrame is working");
-		}
+  public function start(): void {
+    $this->working = true;
+  }
 
-		$this->controllerManager->addController($controller);
-	}
+  public function isWorking(): bool {
+    return $this->working;
+  }
 
-	/**
-	 * @throws type\TypeManagerException
-	 */
-	public function addTypeValidator(TypeValidator $validator): void {
-		$this->typeManager->addTypeValidator($validator);
-	}
+  public function getControllerManager(): ControllerManager {
+    return $this->controllerManager;
+  }
 
-	public function isDebug(): bool {
-		return $this->settings->debug;
-	}
-
-	public function getApiVersion(): string {
-		return $this->settings->apiVersion;
-	}
-
-	public function getSettings(): PrismaFrameSettings {
-		return $this->settings;
-	}
-
-	public function start() {
-		$this->working = true;
-	}
-
-	public function isWorking(): bool {
-		return $this->working;
-	}
-
-	public function getControllerManager(): ControllerManager {
-		return $this->controllerManager;
-	}
-
-	public function getTypeManager(): TypeManager {
-		return $this->typeManager;
-	}
+  public function getTypeManager(): TypeManager {
+    return $this->typeManager;
+  }
 
 }

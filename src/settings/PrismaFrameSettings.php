@@ -1,19 +1,20 @@
 <?php
 
-
 namespace GreenWix\prismaFrame\settings;
 
-
 final class PrismaFrameSettings {
-	public function __construct(bool $debug, string $apiVersion) {
-		$this->debug = $debug;
-		$this->apiVersion = $apiVersion;
-	}
 
-	/** @var bool */
-	public $debug;
+  public bool $debug;
 
-	/** @var string */
-	public $apiVersion;
+  /** @var string[] */
+  public array $supportedApiVersions;
+
+  /**
+   * @param string[] $supportedApiVersions
+   */
+  public function __construct(bool $debug, array $supportedApiVersions) {
+    $this->debug = $debug;
+    $this->supportedApiVersions = $supportedApiVersions;
+  }
 
 }
