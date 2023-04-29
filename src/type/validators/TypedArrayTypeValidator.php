@@ -5,6 +5,7 @@ namespace GreenWix\prismaFrame\type\validators;
 use GreenWix\prismaFrame\type\TypeManager;
 use GreenWix\prismaFrame\type\TypeManagerException;
 use GreenWix\prismaFrame\type\TypeValidator;
+use GreenWix\prismaFrame\type\validators\exception\BadValidationException;
 
 class TypedArrayTypeValidator extends TypeValidator {
 
@@ -29,6 +30,7 @@ class TypedArrayTypeValidator extends TypeValidator {
    * @return any[]
    *
    * @throws TypeManagerException
+   * @throws BadValidationException
    */
   public function validateAndGetValue(string $input, array $extraData): array {
     $result = [];

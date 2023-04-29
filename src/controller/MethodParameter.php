@@ -4,6 +4,7 @@ namespace GreenWix\prismaFrame\controller;
 
 use GreenWix\prismaFrame\type\TypeManager;
 use GreenWix\prismaFrame\type\TypeManagerException;
+use GreenWix\prismaFrame\type\validators\exception\BadValidationException;
 
 class MethodParameter {
 
@@ -29,6 +30,7 @@ class MethodParameter {
    * @return any
    *
    * @throws TypeManagerException
+   * @throws BadValidationException
    */
   public function validateAndGetValue(string $input) {
     $typeManager = $this->typeManager;

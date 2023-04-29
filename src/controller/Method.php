@@ -45,6 +45,7 @@ final class Method {
    * @throws BadInputException
    * @throws TypeManagerException
    * @throws WrongHttpMethodException
+   * @throws BadValidationException
    */
   public function invoke(string $httpMethod, array $args): array {
     if (!isset($this->httpMethods[strtoupper($httpMethod)])) {

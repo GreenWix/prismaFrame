@@ -6,6 +6,7 @@ namespace GreenWix\prismaFrame\type;
 
 use GreenWix\prismaFrame\type\validators\ArrayValidator;
 use GreenWix\prismaFrame\type\validators\BoolValidator;
+use GreenWix\prismaFrame\type\validators\exception\BadValidationException;
 use GreenWix\prismaFrame\type\validators\FloatValidator;
 use GreenWix\prismaFrame\type\validators\IntValidator;
 use GreenWix\prismaFrame\type\validators\StringValidator;
@@ -55,6 +56,7 @@ class TypeManager {
    * @return any
    *
    * @throws TypeManagerException
+   * @throws BadValidationException
    */
   public function validateTypedInput(string $typeName, string $input, array $extraData = []) {
     $this->checkTypeValidatorExistence($typeName);

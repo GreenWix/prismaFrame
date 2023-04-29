@@ -4,6 +4,7 @@ namespace GreenWix\prismaFrame\controller;
 
 use GreenWix\prismaFrame\controller\exception\UnknownMethodException;
 use GreenWix\prismaFrame\type\TypeManagerException;
+use GreenWix\prismaFrame\type\validators\exception\BadValidationException;
 
 abstract class Controller {
 
@@ -17,6 +18,7 @@ abstract class Controller {
    * @throws exception\BadInputException
    * @throws UnknownMethodException
    * @throws TypeManagerException
+   * @throws BadValidationException
    */
   final public function callMethod(string $methodName, string $httpMethod, array $args): array {
     $this->checkIfMethodExists($methodName);
