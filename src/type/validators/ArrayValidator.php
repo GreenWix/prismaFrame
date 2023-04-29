@@ -17,6 +17,10 @@ class ArrayValidator extends TypeValidator {
   }
 
   public function validateAndGetValue(string $input, array $extraData): array {
+    if (empty($input)) {
+      return [];
+    }
+
     return explode(',', $input);
   }
 

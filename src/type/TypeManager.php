@@ -9,6 +9,7 @@ use GreenWix\prismaFrame\type\validators\BoolValidator;
 use GreenWix\prismaFrame\type\validators\FloatValidator;
 use GreenWix\prismaFrame\type\validators\IntValidator;
 use GreenWix\prismaFrame\type\validators\StringValidator;
+use GreenWix\prismaFrame\type\validators\TypedArrayTypeValidator;
 
 class TypeManager {
 

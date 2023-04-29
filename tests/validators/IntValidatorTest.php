@@ -6,32 +6,24 @@ declare(strict_types=1);
 namespace GreenWix\prismaFrame\tests\validators;
 
 
-use GreenWix\prismaFrame\error\RuntimeErrorException;
 use GreenWix\prismaFrame\type\validators\IntValidator;
-use PHPUnit\Framework\TestCase;
 
-class IntValidatorTest extends TestCase {
+class IntValidatorTest extends ValidatorTestCase {
 
-	private function getValidator(): IntValidator{
+	protected function getValidator(): IntValidator {
 		return new IntValidator();
 	}
 
-	public function testCorrectValue(): void{
-		$v = $this->getValidator();
+  /**
+   * @return int[]
+   */
+  protected function getTestValues(): array {
+    return [
+      "107" => 107
+    ];
+  }
 
-		$a = 5;
-
-		$val = $v->validateAndGetValue("107", []);
-
-		$this->assertEquals(107, $val);
-	}
-
-	public function testNoValue(): void{
-		$this->expectException(RuntimeErrorException::class);
-
-		$v = $this->getValidator();
-
-		$val = $v->validateAndGetValue("", []);
-	}
-
+  protected function getBadValues(): array {
+    return ["test"];
+  }
 }

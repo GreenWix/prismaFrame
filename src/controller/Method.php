@@ -5,6 +5,7 @@ namespace GreenWix\prismaFrame\controller;
 use GreenWix\prismaFrame\controller\exception\BadInputException;
 use GreenWix\prismaFrame\controller\exception\WrongHttpMethodException;
 use GreenWix\prismaFrame\type\TypeManagerException;
+use GreenWix\prismaFrame\type\validators\exception\BadValidationException;
 
 final class Method {
 
@@ -25,7 +26,7 @@ final class Method {
   /**
    * Method constructor.
    * @param MethodParameter[] $parameters
-   * @param string[] $httpMethods
+   * @param string[]          $httpMethods
    */
   public function __construct(string $name, array $parameters, array $httpMethods, Controller $controller) {
     $this->name = $name;
@@ -52,16 +53,27 @@ final class Method {
 
     $values = [];
     foreach ($this->parameters as $name => $param) {
-      if ($param->required && !isset($args[$name])) {
-        throw new BadInputException("Parameter \"$name\" is required");
-      }
+      try {
+        if ($param->required && !isset($args[$name])) {
+          throw new BadInputException("Parameter \"$name\" is required");
+        }
 
-      if (!isset($args[$name])) {
-        continue;
-      }
+        if (!isset($args[$name])) {
+          continue;
+        }
 
-      $argValue = $args[$name];
-      $values[] = $param->validateAndGetValue($argValue);
+        $argValue = $args[$name];
+        $values[] = $param->validateAndGetValue($argValue);
+      } catch (BadValidationException $exception) {
+        $value = "Passed wrong value to \"$name\" parameter";
+        $message = $exception->getMessage();
+
+        if ($message !== BadValidationException::DEFAULT_MESSAGE) {
+          $value .= ": {$message}";
+        }
+
+        throw new BadValidationException($value, $exception->httpCode, $exception);
+     }
     }
 
     return $this->controller->{$this->name}(...$values);

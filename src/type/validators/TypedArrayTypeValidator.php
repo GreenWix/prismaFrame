@@ -1,6 +1,10 @@
 <?php
 
-namespace GreenWix\prismaFrame\type;
+namespace GreenWix\prismaFrame\type\validators;
+
+use GreenWix\prismaFrame\type\TypeManager;
+use GreenWix\prismaFrame\type\TypeManagerException;
+use GreenWix\prismaFrame\type\TypeValidator;
 
 class TypedArrayTypeValidator extends TypeValidator {
 

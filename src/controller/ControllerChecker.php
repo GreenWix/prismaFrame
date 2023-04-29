@@ -88,19 +88,31 @@ class ControllerChecker {
 
     $i = 0;
     foreach ($method->getParameters() as $methodParameter) {
-      if (!isset($docParameters[$i])) {
-        throw new InternalErrorException("PHPDoc does not contain all method arguments");
+      $type = $methodParameter->getType();
+      if ($type->allowsNull()) {
+        throw new InternalErrorException("Nullable types are not supported");
       }
 
-      $docParameter = $docParameters[$i];
       $parameterName = $methodParameter->getName();
-      if ($docParameter->name !== $parameterName) {
-        throw new InternalErrorException("The order of the arguments in PHPDoc not match the order of the method arguments");
+      if (isset($docParameters[$i])) {
+        $docParameter = $docParameters[$i];
+        if ($docParameter->name !== $parameterName) {
+          throw new InternalErrorException("The order of the arguments in PHPDoc not match the order of the method arguments");
+        }
+
+        $docParameter->required = !$methodParameter->isOptional();
+      } else {
+        $extraData = [];
+        $docParameter = new MethodParameter(
+          $this->prismaFrame->getTypeManager(),
+          $parameterName,
+          $type->getName(),
+          $extraData,
+          !$methodParameter->isOptional()
+        );
       }
 
-      $docParameter->required = !$methodParameter->isOptional();
       $resultParameters[$parameterName] = $docParameter;
-
       $this->checkParameterType($docParameter);
 
       ++$i;
@@ -152,7 +164,8 @@ class ControllerChecker {
     }
 
     if (!isset($doc['return'])) {
-      throw new InternalErrorException("There is no @return in PHPDoc");
+      // все ок, точно возвращаем массив
+      return;
     }
 
     $docReturnType = $doc['return'][0];

@@ -51,11 +51,13 @@ class RequestHandler {
     } catch (Throwable $exception) {
       $errorResponse = Error::make($prismaFrame->isDebug(), $exception);
 
+      $controllerName = isset($controller) ? $controller->getName() : "<no controller>";
+
       $event = new AfterErrorRequestEvent(
         $request,
-        $controller ?? "<no controller>",
+        $controllerName,
         $method ?? "<no method>",
-        $args ?? "<no args>",
+        $args ?? [],
         $errorResponse,
         $exception
       );
@@ -64,7 +66,7 @@ class RequestHandler {
       return $errorResponse;
     } finally {
       if (isset($controller, $method, $args, $response)) {
-        $event = new AfterSuccessRequestEvent($request, $controller, $method, $args, $response);
+        $event = new AfterSuccessRequestEvent($request, $controller->getName(), $method, $args, $response);
         $eventsHandler->afterSuccessfulRequest($event);
       }
     }
@@ -107,7 +109,7 @@ class RequestHandler {
 
     $version = $queryParams["v"];
     if (!in_array($version, $this->prismaFrame->getSupportedApiVersions(), true)) {
-      throw new VersionException("This version is incompatible");
+      throw new VersionException("This version is unsupported");
     }
   }
 

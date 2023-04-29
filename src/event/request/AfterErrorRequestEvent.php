@@ -3,6 +3,7 @@
 namespace GreenWix\prismaFrame\event\request;
 
 use GreenWix\prismaFrame\Response;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 class AfterErrorRequestEvent extends RequestEvent {
