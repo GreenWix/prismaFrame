@@ -13,18 +13,21 @@ use GreenWix\prismaFrame\event\request\BeforeRequestEvent;
 use GreenWix\prismaFrame\handler\exception\VersionException;
 use GreenWix\prismaFrame\PrismaFrame;
 use GreenWix\prismaFrame\Response;
+use GreenWix\prismaFrame\settings\RequestOptions;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 class RequestHandler {
 
   protected PrismaFrame $prismaFrame;
+  protected RequestOptions $options;
 
   public function __construct(PrismaFrame $prismaFrame) {
     $this->prismaFrame = $prismaFrame;
   }
 
-  public function handle(ServerRequestInterface $request): Response {
+  public function handle(ServerRequestInterface $request, RequestOptions $options): Response {
+    $this->options = $options;
     $prismaFrame = $this->prismaFrame;
     $eventsHandler = $prismaFrame->getEventsHandler();
 
@@ -113,14 +116,24 @@ class RequestHandler {
     }
   }
 
+  /**
+   * @return string[]
+   */
   private function getControllerNameAndMethod(string $url): array {
-    $hostAndControllerAndMethod = explode("/", $url, 2);
+    $opts = $this->options;
 
-    $controllerAndMethod = $hostAndControllerAndMethod[1];
-    $controllerAndMethodArray = explode(".", $controllerAndMethod ?? "", 2);
+    if ($opts->isForcedControllerAndMethod()) {
+      $controller = $opts->force_controller;
+      $method = $opts->force_method;
+    } else {
+      $hostAndControllerAndMethod = explode("/", $url, 2);
 
-    $controller = $controllerAndMethodArray[0] ?? "";
-    $method = $controllerAndMethodArray[1] ?? "";
+      $controllerAndMethod = $hostAndControllerAndMethod[1];
+      $controllerAndMethodArray = explode(".", $controllerAndMethod ?? "", 2);
+
+      $controller = $controllerAndMethodArray[0] ?? "";
+      $method = $controllerAndMethodArray[1] ?? "";
+    }
 
     return [$controller, $method];
   }

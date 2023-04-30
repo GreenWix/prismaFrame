@@ -9,6 +9,7 @@ use GreenWix\prismaFrame\error\InternalErrorException;
 use GreenWix\prismaFrame\event\EventsHandler;
 use GreenWix\prismaFrame\handler\RequestHandler;
 use GreenWix\prismaFrame\settings\PrismaFrameSettings;
+use GreenWix\prismaFrame\settings\RequestOptions;
 use GreenWix\prismaFrame\type\TypeManager;
 use GreenWix\prismaFrame\type\TypeValidator;
 use Psr\Http\Message\ServerRequestInterface;
@@ -41,12 +42,16 @@ class PrismaFrame {
   /**
    * @throws InternalErrorException
    */
-  public function handleRequest(ServerRequestInterface $request): Response {
+  public function handleRequest(ServerRequestInterface $request, ?RequestOptions $options = null): Response {
     if (!$this->isWorking()) {
       throw new InternalErrorException("Start prismaFrame before handling requests");
     }
 
-    return $this->requestHandler->handle($request);
+    if ($options === null) {
+      $options = RequestOptions::new();
+    }
+
+    return $this->requestHandler->handle($request, $options);
   }
 
   public function getEventsHandler(): EventsHandler {
