@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace GreenWix\prismaFrame\event;
 
+use Exception;
 use GreenWix\prismaFrame\event\request\AfterErrorRequestEvent;
 use GreenWix\prismaFrame\event\request\AfterSuccessRequestEvent;
 use GreenWix\prismaFrame\event\request\BeforeRequestEvent;
@@ -13,6 +14,7 @@ abstract class EventsHandler {
   /**
    * Событие перед обрбаоткой запроса
    * Для отмены обработки запроса используйте эксепшены
+   * @throws Exception
    */
   abstract public function beforeRequest(BeforeRequestEvent $event): void;
 

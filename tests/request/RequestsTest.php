@@ -60,7 +60,7 @@ class RequestsTest extends RequestsTestCase {
     ];
 
     $response = $this->get('test.doSomething', $params);
-    $this->assertErrorResponse($response, 'Parameter "value" is required');
+    $this->assertErrorResponse($response, 'Parameter value is required');
   }
 
   public function testRequestNoVersion(): void {
@@ -69,7 +69,7 @@ class RequestsTest extends RequestsTestCase {
     ];
 
     $response = $this->get('test.doSomething', $params);
-    $this->assertErrorResponse($response, 'Parameter "v" is required');
+    $this->assertErrorResponse($response, 'Parameter v is required');
   }
 
   public function testRequestUnsupportedVersion(): void {

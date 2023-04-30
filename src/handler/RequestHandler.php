@@ -108,11 +108,12 @@ class RequestHandler {
    */
   private function checkVersion(array $queryParams): void {
     if (!isset($queryParams["v"])) {
-      throw new VersionException("Parameter \"v\" is required");
+      throw new VersionException("Parameter v is required");
     }
 
     $version = $queryParams["v"];
-    if (!in_array($version, $this->prismaFrame->getSupportedApiVersions(), true)) {
+    $supportedVersions = $this->prismaFrame->getSupportedApiVersions();
+    if (!in_array($version, $supportedVersions, true)) {
       throw new VersionException("This version is unsupported");
     }
   }

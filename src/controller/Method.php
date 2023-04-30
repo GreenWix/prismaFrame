@@ -14,8 +14,8 @@ final class Method {
   /** @var MethodParameter[] */
   private array $parameters;
 
-  /** @var bool[] array<string, bool> */
-  private array $httpMethods = [];
+  /** @var string[] */
+  private array $httpMethods;
 
   // Используется для вывода об ошибке, которая появляется если запрос сделан с неподдерживаемым HTTP методом
   // Нужен для того, чтобы постоянно implode("|", httpMethods) не делать
@@ -31,10 +31,7 @@ final class Method {
   public function __construct(string $name, array $parameters, array $httpMethods, Controller $controller) {
     $this->name = $name;
     $this->parameters = $parameters;
-    foreach ($httpMethods as $method) {
-      $this->httpMethods[$method] = true; // чтобы можно было потом ускоренно проверять через isset
-    }
-    $this->flatHttpMethods = implode("|", $httpMethods);
+    $this->httpMethods = $httpMethods;
     $this->controller = $controller;
   }
 
@@ -48,15 +45,16 @@ final class Method {
    * @throws BadValidationException
    */
   public function invoke(string $httpMethod, array $args): array {
-    if (!isset($this->httpMethods[strtoupper($httpMethod)])) {
-      throw new WrongHttpMethodException("This method supports only $this->flatHttpMethods HTTP method(s). Got $httpMethod");
+    if (!in_array(strtoupper($httpMethod), $this->httpMethods)) {
+      $supportMethods = implode("|", $this->httpMethods);
+      throw new WrongHttpMethodException("This method supports only {$supportMethods} HTTP method(s). Got $httpMethod");
     }
 
     $values = [];
     foreach ($this->parameters as $name => $param) {
       try {
         if ($param->required && !isset($args[$name])) {
-          throw new BadInputException("Parameter \"$name\" is required");
+          throw new BadInputException("Parameter {$name} is required");
         }
 
         if (!isset($args[$name])) {
