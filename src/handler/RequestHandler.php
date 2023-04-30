@@ -42,7 +42,7 @@ class RequestHandler {
 
       [$controller, $method] = $this->getControllerNameAndMethod($url);
 
-      $event = new BeforeRequestEvent($request, $controller, $method, $args);
+      $event = new BeforeRequestEvent($request, $controller, $method, $args, $options);
       $eventsHandler->beforeRequest($event);
 
       $controllerManager = $prismaFrame->getControllerManager();
@@ -62,14 +62,15 @@ class RequestHandler {
         $method ?? "<no method>",
         $args ?? [],
         $errorResponse,
-        $exception
+        $exception,
+        $options
       );
       $eventsHandler->afterErrorRequest($event);
 
       return $errorResponse;
     } finally {
       if (isset($controller, $method, $args, $response)) {
-        $event = new AfterSuccessRequestEvent($request, $controller->getName(), $method, $args, $response);
+        $event = new AfterSuccessRequestEvent($request, $controller->getName(), $method, $args, $response, $options);
         $eventsHandler->afterSuccessfulRequest($event);
       }
     }
