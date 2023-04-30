@@ -37,7 +37,7 @@ class ControllerChecker {
 
       try {
         $resultMethods[$methodName] = $this->checkAndGetMethod($method, $controller);
-      } catch (Throwable $exception) {
+      } catch (\Exception $exception) {
         throw new InternalErrorException("An error occurred while processing $controllerAndMethodName method", HTTPCodes::INTERNAL_SERVER_ERROR, $exception);
       }
     }
@@ -232,6 +232,10 @@ class ControllerChecker {
       }
 
       $typeName = array_shift($param);
+      if (str_contains($typeName, '|')) {
+        throw new InternalErrorException("Multiple types for parameter are not supported");
+      }
+
       $parameterName = array_shift($param);
 
       if ($parameterName[0] !== "$") {
