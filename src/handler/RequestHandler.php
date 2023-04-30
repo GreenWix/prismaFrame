@@ -54,7 +54,15 @@ class RequestHandler {
     } catch (Throwable $exception) {
       $errorResponse = Error::make($prismaFrame->isDebug(), $exception);
 
-      $controllerName = isset($controller) ? $controller->getName() : "<no controller>";
+      if (isset($controller)) {
+        if (is_string($controller)) {
+          $controllerName = $controller;
+        } else {
+          $controllerName = $controller->getName();
+        }
+      } else {
+        $controllerName = "<no controller>";
+      }
 
       $event = new AfterErrorRequestEvent(
         $request,

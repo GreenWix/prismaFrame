@@ -34,10 +34,7 @@ abstract class Controller {
       return;
     }
 
-    $controllerName = $this->getName();
-    $controllerAndMethodName = "$controllerName.$methodName";
-
-    throw new UnknownMethodException("Unknown method \"$controllerAndMethodName\"");
+    throw new UnknownMethodException("Unknown method");
   }
 
   abstract public function getName(): string;
