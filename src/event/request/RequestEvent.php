@@ -29,4 +29,27 @@ abstract class RequestEvent extends Event {
     $this->options = $options;
   }
 
+  public function getRequest(): ServerRequestInterface {
+    return $this->request;
+  }
+
+  public function getController(): string {
+    return $this->controller;
+  }
+
+  public function getMethod(): string {
+    return $this->method;
+  }
+
+  public function getOptions(): RequestOptions {
+    return $this->options;
+  }
+
+  /**
+   * @return mixed[]
+   */
+  public function getArgs(): array {
+    return $this->args;
+  }
+
 }
