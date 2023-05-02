@@ -53,18 +53,28 @@ class ControllerChecker {
 
     $comment = $method->getDocComment();
     if ($comment === false) {
-      throw new InternalErrorException("No PHPDoc");
+      $doc = [];
+    } else {
+      $doc = self::parseDoc($comment);
     }
-
-    $doc = self::parseDoc($comment);
 
     $this->checkReturnType($method, $doc);
 
-    if (!isset($doc['httpMethod'])) {
-      throw new InternalErrorException('PHPDoc must contain @httpMethod <GET|POST|PATCH|PUT or some http methods divided by "|">');
+    $attrs = $method->getAttributes(HttpMethod::class);
+    if (count($attrs) === 0) {
+      throw new InternalErrorException("You must specify #[HttpMethod] attribute");
     }
 
-    $httpMethods = $this->getHttpMethods($doc);
+    if (count($attrs) > 1) {
+      throw new InternalErrorException("Multiple #[HttpMethod] attribute is not allowed. Use |");
+    }
+
+    [$attr] = $attrs;
+    /** @var HttpMethod $httpMethodAttr */
+    $httpMethodAttr = $attr->newInstance();
+
+    $httpMethods = $httpMethodAttr->toStringArray();
+
     foreach ($httpMethods as $httpMethod) {
       if (!$this->isHttpMethodAllowed($httpMethod)) {
         throw new InternalErrorException("HTTP method $httpMethod is not supported");
@@ -133,16 +143,6 @@ class ControllerChecker {
     if (!$typeManager->hasTypeValidator($parameterTypeName)) {
       throw new InternalErrorException("Type $parameterTypeName of $parameterName argument is not supported");
     }
-  }
-
-  /**
-   * @return string[]
-   */
-  protected function getHttpMethods(array $doc): array {
-    $methods = implode(" ", $doc['httpMethod']);
-    $uppercaseMethods = strtoupper($methods);
-
-    return explode('|', $uppercaseMethods);
   }
 
   /**
