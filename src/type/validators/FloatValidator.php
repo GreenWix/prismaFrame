@@ -20,7 +20,7 @@ class FloatValidator extends TypeValidator {
   /**
    * @throws BadValidationException
    */
-  public function validateAndGetValue(string $input, array $extraData): float {
+  public function validateAndGetValue(string $input, array $attributes): float {
     if (is_numeric($input)) {
       return (float)$input;
     }

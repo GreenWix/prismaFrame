@@ -16,7 +16,7 @@ class StringValidator extends TypeValidator {
     return true;
   }
 
-  public function validateAndGetValue(string $input, array $extraData): string {
+  public function validateAndGetValue(string $input, array $attributes): string {
     return $input;
   }
 

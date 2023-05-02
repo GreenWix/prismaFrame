@@ -20,7 +20,7 @@ class BoolValidator extends TypeValidator {
   /**
    * @throws BadValidationException
    */
-  public function validateAndGetValue(string $input, array $extraData): bool {
+  public function validateAndGetValue(string $input, array $attributes): bool {
     switch ($input) {
       case 'true':
       case '1':

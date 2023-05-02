@@ -96,12 +96,11 @@ class ControllerChecker {
 
       $parameterName = $methodParameter->getName();
 
-      $extraData = [];
       $parameter = new MethodParameter(
         $this->prismaFrame->getTypeManager(),
         $parameterName,
         $type->getName(),
-        $extraData,
+        $methodParameter->getAttributes(),
         !$methodParameter->isOptional()
       );
 

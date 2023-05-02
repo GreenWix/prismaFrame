@@ -6,6 +6,7 @@ use GreenWix\prismaFrame\type\TypeManager;
 use GreenWix\prismaFrame\type\TypeManagerException;
 use GreenWix\prismaFrame\type\TypeValidator;
 use GreenWix\prismaFrame\type\validators\exception\BadValidationException;
+use ReflectionAttribute;
 
 class TypedArrayTypeValidator extends TypeValidator {
 
@@ -26,18 +27,18 @@ class TypedArrayTypeValidator extends TypeValidator {
   }
 
   /**
-   * @param string[] $extraData
+   * @param ReflectionAttribute[] $attributes
    * @return any[]
    *
    * @throws TypeManagerException
    * @throws BadValidationException
    */
-  public function validateAndGetValue(string $input, array $extraData): array {
+  public function validateAndGetValue(string $input, array $attributes): array {
     $result = [];
     $elements = explode(",", $input);
 
     foreach ($elements as $element) {
-      $value = $this->typeManager->validateTypedInput($this->typeName, $element, $extraData);
+      $value = $this->typeManager->validateTypedInput($this->typeName, $element, $attributes);
 
       $result[] = $value;
     }

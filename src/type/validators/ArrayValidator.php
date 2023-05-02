@@ -16,7 +16,7 @@ class ArrayValidator extends TypeValidator {
     return false;
   }
 
-  public function validateAndGetValue(string $input, array $extraData): array {
+  public function validateAndGetValue(string $input, array $attributes): array {
     if (empty($input)) {
       return [];
     }

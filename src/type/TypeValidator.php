@@ -2,6 +2,8 @@
 
 namespace GreenWix\prismaFrame\type;
 
+use ReflectionAttribute;
+
 abstract class TypeValidator {
 
   /**
@@ -25,9 +27,9 @@ abstract class TypeValidator {
   abstract public function createAlsoArrayType(): bool;
 
   /**
-   * @param string[] $extraData
+   * @param ReflectionAttribute[] $attributes
    * @return any
    */
-  abstract public function validateAndGetValue(string $input, array $extraData);
+  abstract public function validateAndGetValue(string $input, array $attributes);
 
 }

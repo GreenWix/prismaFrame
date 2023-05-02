@@ -11,6 +11,7 @@ use GreenWix\prismaFrame\type\validators\FloatValidator;
 use GreenWix\prismaFrame\type\validators\IntValidator;
 use GreenWix\prismaFrame\type\validators\StringValidator;
 use GreenWix\prismaFrame\type\validators\TypedArrayTypeValidator;
+use ReflectionAttribute;
 
 class TypeManager {
 
@@ -52,18 +53,18 @@ class TypeManager {
   }
 
   /**
-   * @param string[] $extraData
+   * @param ReflectionAttribute[] $attributes
    * @return any
    *
    * @throws TypeManagerException
    * @throws BadValidationException
    */
-  public function validateTypedInput(string $typeName, string $input, array $extraData = []) {
+  public function validateTypedInput(string $typeName, string $input, array $attributes = []) {
     $this->checkTypeValidatorExistence($typeName);
 
     $type = $this->types[$typeName];
 
-    return $type->validateAndGetValue($input, $extraData);
+    return $type->validateAndGetValue($input, $attributes);
   }
 
   public function hasTypeValidator(string $typeName): bool {
