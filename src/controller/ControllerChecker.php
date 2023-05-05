@@ -21,7 +21,7 @@ class ControllerChecker {
    * @return Method[]
    * @throws InternalErrorException
    */
-  public function getControllerMethods(Controller $controller): array {
+  public function getControllerMethods(ControllerBase $controller): array {
     $resultMethods = [];
     $controllerClass = new ReflectionClass($controller);
     $controllerName = $controller->getName();
@@ -48,7 +48,7 @@ class ControllerChecker {
    * @throws InternalErrorException
    * @throws InternalErrorException
    */
-  protected function checkAndGetMethod(ReflectionMethod $method, Controller $controller): Method {
+  protected function checkAndGetMethod(ReflectionMethod $method, ControllerBase $controller): Method {
     $methodName = $method->getName();
 
     $this->checkReturnType($method);
@@ -146,7 +146,7 @@ class ControllerChecker {
   }
 
   public function isMethodInternal(string $methodName): bool {
-    $internalMethods = ['getName', 'callMethod'];
+    $internalMethods = ['getName', 'callMethod', 'beforeCall'];
 
     return in_array($methodName, $internalMethods, true);
   }

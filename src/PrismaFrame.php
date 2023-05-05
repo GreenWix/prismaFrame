@@ -2,7 +2,7 @@
 
 namespace GreenWix\prismaFrame;
 
-use GreenWix\prismaFrame\controller\Controller;
+use GreenWix\prismaFrame\controller\ControllerBase;
 use GreenWix\prismaFrame\controller\ControllerManager;
 use GreenWix\prismaFrame\error\InternalErrorException;
 use GreenWix\prismaFrame\event\EventsHandler;
@@ -60,7 +60,7 @@ class PrismaFrame {
   /**
    * @throws InternalErrorException
    */
-  public function addController(Controller $controller): void {
+  public function addController(ControllerBase $controller): void {
     if ($this->isWorking()) {
       throw new InternalErrorException("You can't add new controllers while prismaFrame is working");
     }

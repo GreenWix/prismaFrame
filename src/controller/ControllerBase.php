@@ -3,10 +3,11 @@
 namespace GreenWix\prismaFrame\controller;
 
 use GreenWix\prismaFrame\controller\exception\UnknownMethodException;
+use GreenWix\prismaFrame\error\PrismaException;
 use GreenWix\prismaFrame\type\TypeManagerException;
 use GreenWix\prismaFrame\type\validators\exception\BadValidationException;
 
-abstract class Controller {
+abstract class ControllerBase {
 
   /** @var Method[] */
   public array $methods = [];
@@ -19,11 +20,22 @@ abstract class Controller {
    * @throws UnknownMethodException
    * @throws TypeManagerException
    * @throws BadValidationException
+   * @throws PrismaException
    */
   final public function callMethod(string $methodName, string $httpMethod, array $args): array {
     $this->checkIfMethodExists($methodName);
 
+    $this->beforeCall();
+
     return $this->methods[$methodName]->invoke($httpMethod, $args);
+  }
+
+  /**
+   * Проверки перед вызовом
+   * @throws PrismaException
+   */
+  public function beforeCall(): void {
+
   }
 
   /**
@@ -34,7 +46,7 @@ abstract class Controller {
       return;
     }
 
-    throw new UnknownMethodException("Unknown method");
+    throw new UnknownMethodException();
   }
 
   abstract public function getName(): string;

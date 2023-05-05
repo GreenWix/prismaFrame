@@ -2,11 +2,11 @@
 
 namespace GreenWix\prismaFrame\tests\request;
 
-use GreenWix\prismaFrame\controller\Controller;
+use GreenWix\prismaFrame\controller\ControllerBase;
 use GreenWix\prismaFrame\controller\HttpMethod;
 use GreenWix\prismaFrame\type\validators\exception\BadValidationException;
 
-class TestController extends Controller {
+class TestControllerBase extends ControllerBase {
 
   public function getName(): string {
     return "test";

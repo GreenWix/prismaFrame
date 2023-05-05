@@ -21,14 +21,14 @@ final class Method {
   // Нужен для того, чтобы постоянно implode("|", httpMethods) не делать
   private string $flatHttpMethods;
 
-  private Controller $controller;
+  private ControllerBase $controller;
 
   /**
    * Method constructor.
    * @param MethodParameter[] $parameters
    * @param string[]          $httpMethods
    */
-  public function __construct(string $name, array $parameters, array $httpMethods, Controller $controller) {
+  public function __construct(string $name, array $parameters, array $httpMethods, ControllerBase $controller) {
     $this->name = $name;
     $this->parameters = $parameters;
     $this->httpMethods = $httpMethods;

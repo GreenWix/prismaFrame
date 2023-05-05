@@ -22,7 +22,7 @@ class RequestsTest extends RequestsTestCase {
     $logger = new NullLogger();
 
     $this->prismaFrame = new PrismaFrame($settings, $eventsHandler, $logger);
-    $this->prismaFrame->addController(new TestController());
+    $this->prismaFrame->addController(new TestControllerBase());
 
     $this->serverRequestFactory = new ServerRequestFactory();
 

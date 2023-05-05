@@ -10,7 +10,7 @@ use GreenWix\prismaFrame\PrismaFrame;
 
 final class ControllerManager {
 
-  /** @var Controller[] */
+  /** @var ControllerBase[] */
   private array $controllers = [];
 
   private ControllerChecker $checker;
@@ -22,7 +22,7 @@ final class ControllerManager {
   /**
    * @throws UnknownControllerException
    */
-  public function getController(string $name): Controller {
+  public function getController(string $name): ControllerBase {
     if (!isset($this->controllers[$name])) {
       throw new UnknownControllerException("Unknown controller");
     }
@@ -33,7 +33,7 @@ final class ControllerManager {
   /**
    * @throws InternalErrorException
    */
-  public function addController(Controller $controller): void {
+  public function addController(ControllerBase $controller): void {
     $controllerName = $controller->getName();
     if (isset($this->controllers[$controllerName])) {
       throw new InternalErrorException("Controller $controllerName is already registered");
