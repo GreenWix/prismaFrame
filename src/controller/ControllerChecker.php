@@ -29,7 +29,7 @@ class ControllerChecker {
     $methods = $controllerClass->getMethods(ReflectionMethod::IS_PUBLIC);
     foreach ($methods as $method) {
       $methodName = $method->getName();
-      if ($this->isMethodInternal($methodName)) {
+      if ($this->isMethodInternal($method)) {
         continue;
       }
 
@@ -74,7 +74,7 @@ class ControllerChecker {
       }
     }
 
-    $parameters = $this->checkAndGetParameters($method);
+    $parameters = $this->checkAndGetParameters($method, $controller);
 
     return new Method($methodName, $parameters, $httpMethods, $controller);
   }
@@ -84,10 +84,10 @@ class ControllerChecker {
    *
    * @throws InternalErrorException
    */
-  protected function checkAndGetParameters(ReflectionMethod $method): array {
+  protected function checkAndGetParameters(ReflectionMethod $method, ControllerBase $controller): array {
     $resultParameters = [];
+    $methodName = $method->getName();
 
-    $i = 0;
     foreach ($method->getParameters() as $methodParameter) {
       $type = $methodParameter->getType();
       if ($type->allowsNull()) {
@@ -106,8 +106,21 @@ class ControllerChecker {
 
       $resultParameters[$parameterName] = $parameter;
       $this->checkParameterType($parameter);
+    }
 
-      ++$i;
+    foreach ($controller->getRequiredParameters() as $parameterName => $typeName) {
+      if (!isset($resultParameters[$parameterName])) {
+        throw new InternalErrorException("Method $methodName has no $parameterName parameter which is required");
+      }
+
+      $parameter = $resultParameters[$parameterName];
+      if ($parameter->typeName !== $typeName) {
+        throw new InternalErrorException("Method $methodName has required parameter $parameterName with wrong type");
+      }
+
+      if (!$parameter->required) {
+        throw new InternalErrorException("Method $methodName has required parameter $parameterName which is optional in method parameters");
+      }
     }
 
     return $resultParameters;
@@ -145,10 +158,10 @@ class ControllerChecker {
     }
   }
 
-  public function isMethodInternal(string $methodName): bool {
-    $internalMethods = ['getName', 'callMethod', 'beforeCall'];
+  public function isMethodInternal(ReflectionMethod $method): bool {
+    $attrs = $method->getAttributes(NotControllerMethod::class);
 
-    return in_array($methodName, $internalMethods, true);
+    return !empty($attrs);
   }
 
   public function isHttpMethodAllowed(string $httpMethod): bool {

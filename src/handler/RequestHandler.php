@@ -48,7 +48,7 @@ class RequestHandler {
       $controllerManager = $prismaFrame->getControllerManager();
       $controller = $controllerManager->getController($controller);
 
-      $response = new Response($controller->callMethod($method, $httpMethod, $args), HTTPCodes::OK);
+      $response = new Response($controller->callMethod($method, $httpMethod, $args, $request, $options), HTTPCodes::OK);
 
       return $response;
     } catch (Throwable $exception) {

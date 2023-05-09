@@ -21,18 +21,18 @@ class RequestsTest extends RequestsTestCase {
     $eventsHandler = new TestEventsHandler();
     $logger = new NullLogger();
 
-    $this->prismaFrame = new PrismaFrame($settings, $eventsHandler, $logger);
-    $this->prismaFrame->addController(new TestControllerBase());
-
     $this->serverRequestFactory = new ServerRequestFactory();
 
-    $this->prismaFrame->start();
+    $this->prismaFrame = PrismaFrame::new($settings, $eventsHandler, $logger)
+      ->addController(new TestController())
+      ->start();
   }
 
   public function testRequestSuccess(): void {
     $params = [
       'v' => '1.0.0',
       'value' => 'test',
+      'test_number' => 6
     ];
 
     $response = $this->get('test.doSomething', $params);
@@ -40,7 +40,7 @@ class RequestsTest extends RequestsTestCase {
       $response,
       [
         'value' => 'test',
-        'optional_value' => true
+        'optional_value' => true,
       ]
     );
   }
@@ -48,6 +48,7 @@ class RequestsTest extends RequestsTestCase {
   public function testRequestCustomExceptions(): void {
     $params = [
       'v' => '1.0.0',
+      'test_number' => 6
     ];
 
     $response = $this->get('test.doSomethingException', $params);
@@ -102,6 +103,7 @@ class RequestsTest extends RequestsTestCase {
 
     $params = [
       'value' => 'test',
+      'test_number' => 6
     ];
 
     $response = $this->post('test.doSomethingPost', $query, $params);
@@ -121,7 +123,8 @@ class RequestsTest extends RequestsTestCase {
 
     $params = [
       'value' => 'test',
-      'optional_value' => 'test'
+      'optional_value' => 'test',
+      'test_number' => 6
     ];
 
     $response = $this->post('test.doSomethingPost', $query, $params);

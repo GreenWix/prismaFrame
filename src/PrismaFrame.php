@@ -24,14 +24,8 @@ class PrismaFrame {
   private PrismaFrameSettings $settings;
   private LoggerInterface $logger;
 
-  public function __construct(PrismaFrameSettings $settings, EventsHandler $eventsHandler, LoggerInterface $logger) {
-    $this->settings = $settings;
-    $this->logger = $logger;
-    $this->typeManager = new TypeManager();
-    $this->controllerManager = new ControllerManager($this);
-    $this->requestHandler = new RequestHandler($this);
-
-    $this->eventsHandler = $eventsHandler;
+  public static function new(PrismaFrameSettings $settings, EventsHandler $eventsHandler, LoggerInterface $logger): self {
+    return new self($settings, $eventsHandler, $logger);
   }
 
   public function getLogger(): LoggerInterface {
@@ -60,19 +54,23 @@ class PrismaFrame {
   /**
    * @throws InternalErrorException
    */
-  public function addController(ControllerBase $controller): void {
+  public function addController(ControllerBase $controller): self {
     if ($this->isWorking()) {
       throw new InternalErrorException("You can't add new controllers while prismaFrame is working");
     }
 
     $this->controllerManager->addController($controller);
+
+    return $this;
   }
 
   /**
    * @throws type\TypeManagerException
    */
-  public function addTypeValidator(TypeValidator $validator): void {
+  public function addTypeValidator(TypeValidator $validator): self {
     $this->typeManager->addTypeValidator($validator);
+
+    return $this;
   }
 
   public function isDebug(): bool {
@@ -90,8 +88,10 @@ class PrismaFrame {
     return $this->settings;
   }
 
-  public function start(): void {
+  public function start(): self {
     $this->working = true;
+
+    return $this;
   }
 
   public function isWorking(): bool {
@@ -104,6 +104,16 @@ class PrismaFrame {
 
   public function getTypeManager(): TypeManager {
     return $this->typeManager;
+  }
+
+  private function __construct(PrismaFrameSettings $settings, EventsHandler $eventsHandler, LoggerInterface $logger) {
+    $this->settings = $settings;
+    $this->logger = $logger;
+    $this->typeManager = new TypeManager();
+    $this->controllerManager = new ControllerManager($this);
+    $this->requestHandler = new RequestHandler($this);
+
+    $this->eventsHandler = $eventsHandler;
   }
 
 }

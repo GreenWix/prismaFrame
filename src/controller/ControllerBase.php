@@ -4,8 +4,10 @@ namespace GreenWix\prismaFrame\controller;
 
 use GreenWix\prismaFrame\controller\exception\UnknownMethodException;
 use GreenWix\prismaFrame\error\PrismaException;
+use GreenWix\prismaFrame\settings\RequestOptions;
 use GreenWix\prismaFrame\type\TypeManagerException;
 use GreenWix\prismaFrame\type\validators\exception\BadValidationException;
+use Psr\Http\Message\ServerRequestInterface;
 
 abstract class ControllerBase {
 
@@ -22,19 +24,31 @@ abstract class ControllerBase {
    * @throws BadValidationException
    * @throws PrismaException
    */
-  final public function callMethod(string $methodName, string $httpMethod, array $args): array {
+  #[NotControllerMethod]
+  final public function callMethod(string $methodName, string $httpMethod, array $args, ServerRequestInterface $request, RequestOptions $options): array {
     $this->checkIfMethodExists($methodName);
 
-    $this->beforeCall();
+    $this->beforeCall($methodName, $httpMethod, $args, $request, $options);
 
     return $this->methods[$methodName]->invoke($httpMethod, $args);
   }
 
   /**
-   * Проверки перед вызовом
+   * Список обязательных параметров в каждом методе контроллера
+   * @return string[] array<arg_name, TypeValidator::class>
+   */
+  #[NotControllerMethod]
+  public function getRequiredParameters(): array {
+    return [];
+  }
+
+  /**
+   * Проверки перед вызовом метода
+   * Содержит сырые данные в args
    * @throws PrismaException
    */
-  public function beforeCall(): void {
+  #[NotControllerMethod]
+  public function beforeCall(string $methodName, string $httpMethod, array $args, ServerRequestInterface $request, RequestOptions $options): void {
 
   }
 
@@ -49,6 +63,7 @@ abstract class ControllerBase {
     throw new UnknownMethodException();
   }
 
+  #[NotControllerMethod]
   abstract public function getName(): string;
 
 }
